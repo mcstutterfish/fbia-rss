@@ -7,7 +7,7 @@ Facebook Instant Articles RSS builder for Laravel 4
 
 Add `mcstutterfish/fbia-rss` to `composer.json`.
 
-    "mcstutterfish/fbia-rss": "~1.0"
+    "mcstutterfish/fbia-rss": "0.1.x"
     
 Run `composer update` to pull down the latest version of FBIARss.
 

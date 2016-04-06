@@ -1,0 +1,28 @@
+{
+  "name": "mcstutterfish/fbia-rss",
+  "description": "Facebook Instant Articles RSS Builder (with Laravel 4 Service Provider)",
+  "version": "0.1.0",
+  "keywords": [
+    "rss",
+    "laravel",
+    "laravel4",
+    "facebook",
+    "instant articles"
+  ],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Christopher M. Black",
+      "email": "cblack@devonium.com"
+    }
+  ],
+  "require": {
+    "php": ">=5.3.0",
+    "illuminate/support": "4.*|5.*"
+  },
+  "autoload": {
+    "psr-4": {
+      "FBIARss\\": "src/FBIARss/"
+    }
+  }
+}

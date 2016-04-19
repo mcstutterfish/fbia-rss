@@ -37,19 +37,6 @@ class ArticleItem extends Base {
 	}
 
 	/**
-	 * getArticle
-	 *
-	 * @author  Christopher M. Black <cblack@devonium.com>
-	 *
-	 * @return Article
-	 */
-	public function getArticle() {
-
-		return $this->_article;
-
-	}
-
-	/**
 	 * render
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
@@ -62,9 +49,22 @@ class ArticleItem extends Base {
 
 		$this->_xmlElement = $xmlElement;
 
-		$this->_xmlElement->addChild($this->getRoot());
+		$root = $this->_xmlElement->addChild($this->getRoot());
 
-		return $this->_article->render($this->_xmlElement);
+		return $this->getArticle()->render($root);
+
+	}
+
+	/**
+	 * getArticle
+	 *
+	 * @author  Christopher M. Black <cblack@devonium.com>
+	 *
+	 * @return Article
+	 */
+	public function getArticle() {
+
+		return $this->_article;
 
 	}
 

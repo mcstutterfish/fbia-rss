@@ -39,9 +39,9 @@ class SocialEmbed extends Base {
 	/**
 	 * Descriptive text for your social embed.
 	 *
-	 * @var \FBIARss\Element\Article\Caption
+	 * @var \FBIARss\Element\Article\Caption[]
 	 */
-	protected $_caption = '';
+	protected $_captions = [];
 
 	/**
 	 * render
@@ -70,9 +70,10 @@ class SocialEmbed extends Base {
 			$socialEmbedString .= '<iframe src="' . $this->getSource() . '"></iframe>';
 		}
 
-		if (!empty($this->getCaption())) {
-			$socialEmbedString .= $this->getCaption()
-				->render();
+		if (!empty($this->getCaptions())) {
+			foreach ($this->getCaptions() as $caption) {
+				$socialEmbedString .= $caption->render();
+			}
 		}
 
 		$socialEmbedString .= '</' . $this->getRoot() . '>';
@@ -113,15 +114,15 @@ class SocialEmbed extends Base {
 	}
 
 	/**
-	 * getCaption
+	 * getCaptionss
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
-	 * @return  Caption    $_caption
+	 * @return  Caption    $_captions
 	 */
-	public function getCaption() {
+	public function getCaptions() {
 
-		return $this->_caption;
+		return $this->_captions;
 
 	}
 
@@ -131,12 +132,17 @@ class SocialEmbed extends Base {
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
 	 * @param   Caption $caption
+	 * @param   boolean $append
 	 *
-	 * @return  SocialEmbed
+	 * @return  Interactive
 	 */
-	public function setCaption(Caption $caption) {
+	public function setCaption(Caption $caption, $append = true) {
 
-		$this->_caption = $caption;
+		if ($append) {
+			$this->_captions[] = $caption;
+		} else {
+			$this->_captions = [$caption];
+		}
 
 		return $this;
 
@@ -149,23 +155,25 @@ class SocialEmbed extends Base {
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
-	 * @param string $title
-	 * @param string $credit
-	 * @param string $body
-	 * @param string $positioning
-	 * @param string $horizontalAlignment
-	 * @param string $verticalAlignment
+	 * @param   string      $title
+	 * @param   string|null $credit
+	 * @param   string|null $body
+	 * @param   string|null $fontSize
+	 * @param   string|null $positioning
+	 * @param   string|null $horizontalAlignment
+	 * @param   string|null $verticalAlignment
 	 *
-	 * @return SocialEmbed
+	 * @return Interactive
 	 */
 	public function createCaption($title,
 		$credit = null,
 		$body = null,
+		$fontSize = null,
 		$positioning = null,
 		$horizontalAlignment = null,
 		$verticalAlignment = null) {
 
-		return $this->setCaption(new Caption($title, $credit, $body, $positioning, $horizontalAlignment, $verticalAlignment));
+		return $this->setCaption(new Caption($title, $credit, $body, $fontSize, $positioning, $horizontalAlignment, $verticalAlignment));
 
 	}
 

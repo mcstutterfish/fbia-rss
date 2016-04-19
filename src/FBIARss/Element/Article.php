@@ -11,19 +11,10 @@ use FBIARss\SimpleXMLElement;
  *
  * @author      Christopher M. Black <cblack@devonium.com>
  *
- * @version     0.1.1
  * @since       0.1.1
+ * @version     0.1.2
  */
 class Article extends Base {
-
-	/**
-	 * @var array
-	 */
-	private static $_articleElementClassNames = [
-		'author' => 'Author',
-		'header' => 'Header',
-		'html' => 'Html',
-	];
 
 	/**
 	 * whether to render the atricle with buuilt-in elements or to assume the __contentEncoded is already formatted
@@ -87,6 +78,32 @@ class Article extends Base {
 	/**
 	 * @var array
 	 */
+	private $__articleElementClassNames = [
+		'ad' => 'Ad',
+		'analytics' => 'Analytics',
+		'audio' => 'Audio',
+		'author' => 'Author',
+		'blockquote' => 'BlockQuote',
+		'bodytext' => 'BodyText',
+		'caption' => 'Caption',
+		'footer' => 'Footer',
+		'header' => 'Header',
+		'html' => 'Html',
+		'image' => 'Image',
+		'interactive' => 'Interactive',
+		'listing' => 'Listing',
+		'location' => 'Location',
+		'map' => 'Map',
+		'pullquote' => 'PullQuote',
+		'relatedarticles' => 'RelatedArticles',
+		'slideshow' => 'SlideShow',
+		'socialembed' => 'SocialEmbed',
+		'video' => 'Video'
+	];
+
+	/**
+	 * @var array
+	 */
 	private $__elements = [];
 
 	/**
@@ -108,7 +125,7 @@ class Article extends Base {
 	 */
 	public function __construct() {
 
-		$this->_head = new Head();
+		$this->_head   = new Head();
 		$this->_header = new Header();
 
 	}
@@ -116,43 +133,78 @@ class Article extends Base {
 	/**
 	 * createElement
 	 *
+	 * @since   0.1.1
+	 * @version 0.1.2
+	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
-	 * @param string $elementName
+	 * @param string  $elementName
+	 * @param boolean $attachElement
 	 *
 	 * @return mixed
 	 * @throws \Exception
 	 */
-	public static function createElement($elementName) {
+	public function createElement($elementName, $attachElement = true) {
 
 		$elementName = strtolower($elementName);
 
-		if (!array_key_exists($elementName, self::$_articleElementClassNames)) {
+		if (!array_key_exists($elementName, $this->__articleElementClassNames)) {
 			throw new \Exception("Invalid article element: {$elementName} does not exist!");
 		}
 
-		$className = __NAMESPACE__ . '\\Article\\' . self::$_articleElementClassNames[$elementName];
+		$className = __NAMESPACE__ . '\\Article\\' . $this->__articleElementClassNames[$elementName];
 
 		if (!class_exists($className)) {
 			throw new \Exception("Class {$className} does not exist!");
 		}
 
-		return new $className();
+		$element = new $className();
+
+		if ($attachElement) {
+			$this->attachElement($element);
+		}
+
+		return $element;
 
 	}
 
 	/**
 	 * attachElement
 	 *
+	 * attach an externally configured article element
+	 *
+	 * @since   0.1.1
+	 * @version 0.1.2
+	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
-	 * @param mixed $element
+	 * @param   mixed $element
 	 *
-	 * @return Article
+	 * @return  Article
 	 */
 	public function attachElement($element) {
 
 		$this->__elements[] = $element;
+
+		return $this;
+
+	}
+
+	/**
+	 * setTags
+	 *
+	 * helper to set the tags in the proper place (head)
+	 *
+	 * @author  Christopher M. Black <cblack@devonium.com>
+	 *
+	 * @param array|string $tags array of tags or comma separated strings
+	 * @param bool         $overwrite
+	 *
+	 * @return Article
+	 */
+	public function setTags($tags, $overwrite = true) {
+
+		$this->getHead()->setTags($tags, $overwrite);
 
 		return $this;
 
@@ -168,49 +220,6 @@ class Article extends Base {
 	public function getHead() {
 
 		return $this->_head;
-
-	}
-
-	/**
-	 * getHeader
-	 *
-	 * @author  Christopher M. Black <cblack@devonium.com>
-	 *
-	 * @return Header
-	 */
-	public function getHeader() {
-
-		return $this->_header;
-
-	}
-
-	/**
-	 * getAuthors
-	 *
-	 * @author  Christopher M. Black <cblack@devonium.com>
-	 *
-	 * @return array
-	 */
-	public function getAuthors() {
-
-		return $this->_authors;
-
-	}
-
-	/**
-	 * setAuthors
-	 *
-	 * @author  Christopher M. Black <cblack@devonium.com>
-	 *
-	 * @param array $authors
-	 *
-	 * @return Article
-	 */
-	public function setAuthors(array $authors) {
-
-		$this->_authors = $authors;
-
-		return $this;
 
 	}
 
@@ -237,6 +246,233 @@ class Article extends Base {
 	}
 
 	/**
+	 * getCanonicalLink
+	 *
+	 * helper to get the canonical link from the proper place (head)
+	 *
+	 * @author  Christopher M. Black <cblack@devonium.com>
+	 *
+	 * @return string
+	 */
+	public function getCanonicalLink() {
+
+		return $this->getHead()->getCanonicalLink();
+
+	}
+
+	/**
+	 * isUseAutomaticAdPlacement
+	 *
+	 * helper to get the status of using automatic ad placement from the proper place (head)
+	 *
+	 * @author  Christopher M. Black <cblack@devonium.com>
+	 *
+	 * @return  boolean
+	 */
+	public function isUseAutomaticAdPlacement() {
+
+		return $this->getHead()->isUseAutomaticAdPlacement();
+
+	}
+
+	/**
+	 * setUseAutomaticAdPlacement
+	 *
+	 * helper to set the status of using automatic ad placement in the proper place (head)
+	 *
+	 * @author  Christopher M. Black <cblack@devonium.com>
+	 *
+	 * @param   boolean $useAutomaticAdPlacement
+	 *
+	 * @return  Article
+	 */
+	public function setUseAutomaticAdPlacement($useAutomaticAdPlacement) {
+
+		$this->getHead()->setUseAutomaticAdPlacement($useAutomaticAdPlacement);
+
+		return $this;
+
+	}
+
+	/**
+	 * getArticleStyle
+	 *
+	 * helper to get the article style from the proper place (head)
+	 *
+	 * @author  Christopher M. Black <cblack@devonium.com>
+	 *
+	 * @return string
+	 */
+	public function getArticleStyle() {
+
+		return $this->getHead()->getArticleStyle();
+
+	}
+
+	/**
+	 * getTags
+	 *
+	 * helper to get the tags from the proper place (head)
+	 *
+	 * @author  Christopher M. Black <cblack@devonium.com>
+	 *
+	 * @return string
+	 */
+	public function getTags() {
+
+		return $this->getHead()->getTags();
+
+	}
+
+	/**
+	 * getPublishedDate
+	 *
+	 * helper to get the published date from the proper place (header)
+	 *
+	 * @author  Christopher M. Black <cblack@devonium.com>
+	 *
+	 * @return  string
+	 */
+	public function getPublishedDate() {
+
+		return $this->getHeader()->getPublishedDate();
+
+	}
+
+	/**
+	 * getHeader
+	 *
+	 * @author  Christopher M. Black <cblack@devonium.com>
+	 *
+	 * @return Header
+	 */
+	public function getHeader() {
+
+		return $this->_header;
+
+	}
+
+	/**
+	 * setArticleStyle
+	 *
+	 * helper to set the article style in the proper place (head)
+	 *
+	 * @author  Christopher M. Black <cblack@devonium.com>
+	 *
+	 * @param   string $articleStyle
+	 *
+	 * @return  Article
+	 */
+	public function setArticleStyle($articleStyle) {
+
+		$this->getHead()->setArticleStyle($articleStyle);
+
+		return $this;
+
+	}
+
+	/**
+	 * render
+	 *
+	 * @author  Christopher M. Black <cblack@devonium.com>
+	 *
+	 * @param SimpleXMLElement $xmlElement
+	 *
+	 * @return SimpleXMLElement
+	 * @throws \Exception
+	 */
+	public function render(SimpleXMLElement $xmlElement = null) {
+
+		$this->_xmlElement = $xmlElement;
+
+		if (!is_a($this->_xmlElement, 'SimpleXMLElement')) {
+			throw new \Exception('render must be passed an object of type SimpleXMLElement');
+		}
+
+		if ($this->_autoRender) {
+			// render the article so we can be sure everything is ok before adding items to the XML doc
+			$this->_renderArticle();
+		}
+
+		if (empty($this->getTitle())) {
+			throw new \Exception('title is required for all articles');
+		} else {
+			$this->_xmlElement->addChild('title', $this->getTitle());
+		}
+
+		if (empty($this->getLink())) {
+			throw new \Exception('link is required for all articles');
+		} else {
+			$this->_xmlElement->addChild('link', $this->getLink());
+		}
+
+		if (!empty($this->getGuid())) {
+			$this->_xmlElement->addChild('guid', $this->getGuid());
+		}
+
+		if (!empty($this->getDescription())) {
+			$this->_xmlElement->addChild('description', $this->getDescription());
+		}
+
+		if (!empty($this->getPubDate())) {
+			$this->_xmlElement->addChild(
+				'pubDate',
+				Base::formatRSSDate(
+					$this->getPubDate()
+				)
+			);
+		}
+
+		if (!empty($this->getAuthors())) {
+			foreach ($this->getAuthors() as $author) {
+				$this->_xmlElement->addChild('author', $author);
+			}
+		}
+
+		// attach article to document
+		$this->_xmlElement->addCdataChild(
+			'content:encoded',
+			$this->getContentEncoded(),
+			'http://purl.org/rss/1.0/modules/content/'
+		);
+
+		return $this->_xmlElement;
+
+	}
+
+	/**
+	 * _renderArticle
+	 *
+	 * @author  Christopher M. Black <cblack@devonium.com>
+	 *
+	 * @return void
+	 */
+	protected function _renderArticle() {
+
+		$this->__contentEncoded = '<!doctype html>';
+		$this->__contentEncoded .= '<html lang="en" prefix="op: http://media.facebook.com/op#">';
+		$this->__contentEncoded .= $this->getHead()->render();
+		$this->__contentEncoded .= '<body>';
+		$this->__contentEncoded .= '<' . $this->__docRoot . '>';
+
+		// Header
+		$this->__contentEncoded .= $this->getHeader()->render();
+
+		// Article content / elements
+		foreach ($this->__elements as $element) {
+			$this->__contentEncoded .= $element->render();
+		}
+
+		// Footer
+//		$this->__contentEncoded .= $this->getFooter()->render();
+
+		$this->__contentEncoded .= '</' . $this->__docRoot . '>';
+		$this->__contentEncoded .= '</body>';
+		$this->__contentEncoded .= '</html>';
+
+	}
+
+	/**
 	 * getTitle
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
@@ -254,13 +490,18 @@ class Article extends Base {
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
-	 * @param string $title
+	 * @param   string  $title
+	 * @param   boolean $alsoSetHeaderTitle
 	 *
-	 * @return Article
+	 * @return  Article
 	 */
-	public function setTitle($title) {
+	public function setTitle($title, $alsoSetHeaderTitle = true) {
 
 		$this->_title = $title;
+
+		if ($alsoSetHeaderTitle) {
+			$this->getHeader()->setTitle($title);
+		}
 
 		return $this;
 
@@ -284,13 +525,18 @@ class Article extends Base {
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
-	 * @param string $link
+	 * @param string  $link
+	 * @param boolean $alsoSetHeadLink
 	 *
 	 * @return Article
 	 */
-	public function setLink($link) {
+	public function setLink($link, $alsoSetHeadLink = true) {
 
-		$this->_link = $link;
+		if ($alsoSetHeadLink) {
+			$this->setCanonicalLink($link);
+		} elseif ($this->isValidURL($link)) {
+			$this->_link = $link;
+		}
 
 		return $this;
 
@@ -375,12 +621,47 @@ class Article extends Base {
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
 	 * @param string|int $pubDate
+	 * @param boolean    $alsoSetHeaderPublishedDate
 	 *
 	 * @return Article
 	 */
-	public function setPubDate($pubDate) {
+	public function setPubDate($pubDate, $alsoSetHeaderPublishedDate = true) {
 
-		$this->_pubDate = Base::formatRSSDate($pubDate);
+		if ($alsoSetHeaderPublishedDate) {
+			$this->setPublishedDate($pubDate);
+		} else {
+			$this->_pubDate = Base::formatRSSDate($pubDate);
+		}
+
+		return $this;
+
+	}
+
+	/**
+	 * getAuthors
+	 *
+	 * @author  Christopher M. Black <cblack@devonium.com>
+	 *
+	 * @return array
+	 */
+	public function getAuthors() {
+
+		return $this->_authors;
+
+	}
+
+	/**
+	 * setAuthors
+	 *
+	 * @author  Christopher M. Black <cblack@devonium.com>
+	 *
+	 * @param array $authors
+	 *
+	 * @return Article
+	 */
+	public function setAuthors(array $authors) {
+
+		$this->_authors = $authors;
 
 		return $this;
 
@@ -398,6 +679,54 @@ class Article extends Base {
 	public function getContentEncoded() {
 
 		return $this->__contentEncoded;
+
+	}
+
+	/**
+	 * setCanonicalLink
+	 *
+	 * helper to set the canonical link in the proper place (head)
+	 *
+	 * @author  Christopher M. Black <cblack@devonium.com>
+	 *
+	 * @param string  $link
+	 * @param boolean $alsoSetArticleLink
+	 *
+	 * @return Article
+	 */
+	public function setCanonicalLink($link, $alsoSetArticleLink = true) {
+
+		$this->getHead()->setCanonicalLink($link);
+
+		if ($alsoSetArticleLink) {
+			$this->_link = $this->getHead()->getCanonicalLink();
+		}
+
+		return $this;
+
+	}
+
+	/**
+	 * setPublishedDate
+	 *
+	 * helper to set the published date in the proper place (header)
+	 *
+	 * @author  Christopher M. Black <cblack@devonium.com>
+	 *
+	 * @param string  $publishedDate
+	 * @param boolean $alsoSetArticlePubDate
+	 *
+	 * @return  Article
+	 */
+	public function setPublishedDate($publishedDate, $alsoSetArticlePubDate = true) {
+
+		$this->getHeader()->setPublishedDate($publishedDate);
+
+		if ($alsoSetArticlePubDate) {
+			$this->_pubDate = $this->getHeader()->getPublishedDate();
+		}
+
+		return $this;
 
 	}
 
@@ -422,89 +751,22 @@ class Article extends Base {
 	}
 
 	/**
-	 * render
+	 * setModifiedDate
+	 *
+	 * helper to set the modified date in the proper place (header)
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
-	 * @param SimpleXMLElement $xmlElement
+	 * @param string $modifiedDate
 	 *
-	 * @return SimpleXMLElement
-	 * @throws \Exception
+	 * @return  Article
 	 */
-	public function render(SimpleXMLElement $xmlElement = null) {
+	public function setModifiedDate($modifiedDate) {
 
-		$this->_xmlElement = $xmlElement;
+		$this->getHeader()->setModifiedDate($modifiedDate);
 
-		if (!is_a($this->_xmlElement, 'SimpleXMLElement')) {
-			throw new \Exception('render must be passed an object of type SimpleXMLElement');
-		}
-
-		if ($this->_autoRender) {
-			// render the article so we can be sure everything is ok before adding items to the XML doc
-			$this->_renderArticle();
-		}
-
-		if (empty($this->_title)) {
-			throw new \Exception('title is required for all articles');
-		} else {
-			$this->_xmlElement->addChild('title', $this->_title);
-		}
-
-		if (empty($this->_link)) {
-			throw new \Exception('link is required for all articles');
-		} else {
-			$this->_xmlElement->addChild('link', $this->_link);
-		}
-
-		if (!empty($this->_guid)) {
-			$this->_xmlElement->addChild('guid', $this->_guid);
-		}
-
-		if (!empty($this->_description)) {
-			$this->_xmlElement->addChild('description', $this->_description);
-		}
-
-		if (!empty($this->_pubDate)) {
-			$this->_xmlElement->addChild('pubDate', $this->_pubDate);
-		}
-
-		if (!empty($this->_authors)) {
-			foreach ($this->_authors as $author) {
-				$this->_xmlElement->addChild('author', $author);
-			}
-		}
-
-		// generate article and attach to document
-		$this->_xmlElement->addCdataChild('content:encoded', $this->__contentEncoded);
-
-		return $this->_xmlElement;
+		return $this;
 
 	}
 
-	/**
-	 * _renderArticle
-	 *
-	 * @author  Christopher M. Black <cblack@devonium.com>
-	 *
-	 * @return void
-	 */
-	protected function _renderArticle() {
-
-		$this->__contentEncoded = '<!doctype html>';
-		$this->__contentEncoded .= '  <html lang="en" prefix="op: http://media.facebook.com/op#">';
-		$this->__contentEncoded .= $this->_head->render();
-		$this->__contentEncoded .= '    <body>';
-		$this->__contentEncoded .= '      <' . $this->__docRoot . '>';
-
-		// Header
-
-		// Article content / elements
-
-		// Footer
-
-		$this->__contentEncoded .= '      </' . $this->__docRoot . '>';
-		$this->__contentEncoded .= '    </body>';
-		$this->__contentEncoded .= '  </html>';
-
-	}
 }

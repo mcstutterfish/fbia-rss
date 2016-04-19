@@ -12,8 +12,8 @@ use FBIARss\SimpleXMLElement;
  *
  * @author      Christopher M. Black <cblack@devonium.com>
  *
- * @version     0.1.1
  * @since       0.1.1
+ * @version     0.1.2
  */
 class Ad extends Base {
 
@@ -42,6 +42,33 @@ class Ad extends Base {
 	 * @var string
 	 */
 	protected $_width = '';
+
+	/**
+	 * Ad constructor.
+	 *
+	 * @author  Christopher M. Black <cblack@devonium.com>
+	 *
+	 * @param string|null $source
+	 * @param string|null $width
+	 * @param string|null $height
+	 */
+	public function __construct($source = null, $width = null, $height = null) {
+
+		if (!is_null($source)) {
+
+			$this->setSource($source);
+
+			if (!empty($width)) {
+				$this->setWidth($width);
+			}
+
+			if (!empty($height)) {
+				$this->setHeight($height);
+			}
+
+		}
+
+	}
 
 	/**
 	 * render
@@ -119,7 +146,11 @@ class Ad extends Base {
 	 */
 	public function setSource($source) {
 
-		$this->_source = $source;
+		$source = $this->stripBeginEndParagraphs($source);
+
+		if (!empty($source)) {
+			$this->_source = $source;
+		}
 
 		return $this;
 

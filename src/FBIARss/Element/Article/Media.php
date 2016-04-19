@@ -10,10 +10,13 @@ use FBIARss\SimpleXMLElement;
  * @package     FBIARss\Element
  * @subpackage  FBIARss\Element\Article
  *
+ * @since       0.1.1
+ * @version     0.1.2
+ *
  * @author      Christopher M. Black <cblack@devonium.com>
  *
- * @version     0.1.1
- * @since       0.1.1
+ * @uses        FBIARss\Element\Base
+ * @uses        FBIARss\SimpleXMLElement
  */
 class Media extends Base {
 
@@ -42,11 +45,11 @@ class Media extends Base {
 	protected $_audio = '';
 
 	/**
-	 * Descriptive text for your Media. May also include attribution to the originator or creator of this GIF.
+	 * Descriptive text for your Media. May also include attribution to the originator or creator of this media.
 	 *
-	 * @var \FBIARss\Element\Article\Caption
+	 * @var \FBIARss\Element\Article\Caption[]
 	 */
-	protected $_caption = '';
+	protected $_captions = [];
 
 	/**
 	 * Enables readers to like this Media.
@@ -84,7 +87,45 @@ class Media extends Base {
 	protected $_presentation = '';
 
 	/**
+	 * Media constructor.
+	 *
+	 * @since   0.1.2
+	 * @version 0.1.2
+	 *
+	 * @author  Christopher M. Black <cblack@devonium.com>
+	 *
+	 * @param   string       $source
+	 * @param   boolean|null $likesEnabled
+	 * @param   boolean|null $commentsEnabled
+	 * @param   string       $presentation
+	 */
+	public function __construct($source = null, $likesEnabled = null, $commentsEnabled = null, $presentation = null) {
+
+		if (!is_null($source)) {
+
+			$this->setSource($source);
+
+			if (is_bool($likesEnabled)) {
+				$this->setLikesEnabled($likesEnabled);
+			}
+
+			if (is_bool($commentsEnabled)) {
+				$this->setCommentsEnabled($commentsEnabled);
+			}
+
+			if (!empty($presentation)) {
+				$this->setPresentation($presentation);
+			}
+
+		}
+
+	}
+
+	/**
 	 * render
+	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
@@ -107,19 +148,18 @@ class Media extends Base {
 				: '') . '>';
 		$mediaString .= '<img src="' . $this->getSource() . '" />';
 
-		if (!empty($this->getCaption())) {
-			$mediaString .= $this->getCaption()
-				->render();
+		if (!empty($this->getCaptions())) {
+			foreach ($this->getCaptions() as $caption) {
+				$mediaString .= $caption->render();
+			}
 		}
 
 		if (!empty($this->getAudio())) {
-			$mediaString .= $this->getAudio()
-				->render();
+			$mediaString .= $this->getAudio()->render();
 		}
 
 		if (!empty($this->getLocation())) {
-			$mediaString .= $this->getLocation()
-				->render();
+			$mediaString .= $this->getLocation()->render();
 		}
 
 		$mediaString .= '</' . $this->getRoot() . '>';
@@ -130,6 +170,9 @@ class Media extends Base {
 
 	/**
 	 * getSource
+	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
@@ -143,6 +186,9 @@ class Media extends Base {
 
 	/**
 	 * setSource
+	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
@@ -165,6 +211,9 @@ class Media extends Base {
 
 	/**
 	 * getFeedback
+	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
@@ -201,6 +250,9 @@ class Media extends Base {
 	/**
 	 * isLikesEnabled
 	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
+	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
 	 * @return  boolean    $_likesEnabled
@@ -213,6 +265,9 @@ class Media extends Base {
 
 	/**
 	 * setLikesEnabled
+	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
@@ -231,6 +286,9 @@ class Media extends Base {
 	/**
 	 * isCommentsEnabled
 	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
+	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
 	 * @return  boolean    $_commentsEnabled
@@ -243,6 +301,9 @@ class Media extends Base {
 
 	/**
 	 * setCommentsEnabled
+	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
@@ -260,6 +321,9 @@ class Media extends Base {
 
 	/**
 	 * getPresentation
+	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
@@ -280,6 +344,9 @@ class Media extends Base {
 	/**
 	 * setPresentation
 	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
+	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
 	 * @param   string $presentation
@@ -295,37 +362,10 @@ class Media extends Base {
 	}
 
 	/**
-	 * getCaption
-	 *
-	 * @author  Christopher M. Black <cblack@devonium.com>
-	 *
-	 * @return  Caption    $_caption
-	 */
-	public function getCaption() {
-
-		return $this->_caption;
-
-	}
-
-	/**
-	 * setCaption
-	 *
-	 * @author  Christopher M. Black <cblack@devonium.com>
-	 *
-	 * @param   Caption $caption
-	 *
-	 * @return  Media
-	 */
-	public function setCaption(Caption $caption) {
-
-		$this->_caption = $caption;
-
-		return $this;
-
-	}
-
-	/**
 	 * getAudio
+	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
@@ -341,6 +381,9 @@ class Media extends Base {
 	 * setAudio
 	 *
 	 * Pass in a pre-setup audio object
+	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
@@ -359,6 +402,9 @@ class Media extends Base {
 	/**
 	 * getLocation
 	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
+	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
 	 * @return  Location    $_location
@@ -371,6 +417,9 @@ class Media extends Base {
 
 	/**
 	 * setLocation
+	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
@@ -397,7 +446,67 @@ class Media extends Base {
 	}
 
 	/**
+	 * createAudio
+	 *
+	 * Setup Audio object
+	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
+	 *
+	 * @author  Christopher M. Black <cblack@devonium.com>
+	 *
+	 * @param   string $source
+	 * @param   string $playMode
+	 * @param   string $title
+	 *
+	 * @return  Media
+	 */
+	public function createAudio($source, $playMode = null, $title = null) {
+
+		return $this->setAudio(new Audio($source, $playMode, $title));
+
+	}
+
+	/**
+	 * getCaptions
+	 *
+	 * @author  Christopher M. Black <cblack@devonium.com>
+	 *
+	 * @return  Caption    $_captions
+	 */
+	public function getCaptions() {
+
+		return $this->_captions;
+
+	}
+
+	/**
+	 * setCaption
+	 *
+	 * @author  Christopher M. Black <cblack@devonium.com>
+	 *
+	 * @param   Caption $caption
+	 * @param   boolean $append
+	 *
+	 * @return  Interactive
+	 */
+	public function setCaption(Caption $caption, $append = true) {
+
+		if ($append) {
+			$this->_captions[] = $caption;
+		} else {
+			$this->_captions = [$caption];
+		}
+
+		return $this;
+
+	}
+
+	/**
 	 * _validPresentation
+	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
@@ -425,52 +534,6 @@ class Media extends Base {
 		}
 
 		return '';
-
-	}
-
-	/**
-	 * createAudio
-	 *
-	 * Setup Audio object
-	 *
-	 * @author  Christopher M. Black <cblack@devonium.com>
-	 *
-	 * @param   string $source
-	 * @param   string $playMode
-	 * @param   string $title
-	 *
-	 * @return  Media
-	 */
-	public function createAudio($source, $playMode = null, $title = null) {
-
-		return $this->setAudio(new Audio($source, $playMode, $title));
-
-	}
-
-	/**
-	 * createCaption
-	 *
-	 * Setup Caption object
-	 *
-	 * @author  Christopher M. Black <cblack@devonium.com>
-	 *
-	 * @param string $title
-	 * @param string $credit
-	 * @param string $body
-	 * @param string $positioning
-	 * @param string $horizontalAlignment
-	 * @param string $verticalAlignment
-	 *
-	 * @return Media
-	 */
-	public function createCaption($title,
-		$credit = null,
-		$body = null,
-		$positioning = null,
-		$horizontalAlignment = null,
-		$verticalAlignment = null) {
-
-		return $this->setCaption(new Caption($title, $credit, $body, $positioning, $horizontalAlignment, $verticalAlignment));
 
 	}
 

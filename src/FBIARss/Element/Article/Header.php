@@ -73,6 +73,13 @@ class Header extends Base {
 	protected $_media = null;
 
 	/**
+	 * Auto-placement ads
+	 *
+	 * @var \FBIARss\Element\Article\Ad[]
+	 */
+	protected $_ads = [];
+
+	/**
 	 * render
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
@@ -84,7 +91,7 @@ class Header extends Base {
 	 */
 	public function render(SimpleXMLElement $xmlElement = null) {
 
-		$headerString = '        <' . $this->getRoot() . '>';
+		$headerString = '<' . $this->getRoot() . '>';
 
 		// add media
 		if (!empty($this->getMedia())) {
@@ -95,17 +102,17 @@ class Header extends Base {
 		if (empty($this->getTitle())) {
 			throw new \Exception('title is required for all articles');
 		} else {
-			$headerString .= '        <h1>' . $this->getTitle() . '</h1>';
+			$headerString .= '<h1>' . $this->getTitle() . '</h1>';
 		}
 
 		// Add subtitle
 		if (!empty($this->getSubTitle())) {
-			$headerString .= '        <h2>' . $this->getSubTitle() . '</h2>';
+			$headerString .= '<h2>' . $this->getSubTitle() . '</h2>';
 		}
 
 		// add kicker
 		if (!empty($this->getKicker())) {
-			$headerString .= '        <h3 class="op-kicker">' . $this->getKicker() . '</h3>';
+			$headerString .= '<h3 class="op-kicker">' . $this->getKicker() . '</h3>';
 		}
 
 		// look and add authors if present
@@ -116,18 +123,29 @@ class Header extends Base {
 		}
 
 		if (!empty($this->getModifiedDate())) {
-			$headerString .= '          <time class="op-modified" dateTime="' . Base::formatRSSDate(
+			$headerString .= '<time class="op-modified" dateTime="' . Base::formatRSSDate(
 					$this->getModifiedDate()
 				) . '">' . Base::formatUserDate($this->getModifiedDate()) . '</time>';
 		}
 
 		if (!empty($this->getPublishedDate())) {
-			$headerString .= '          <time class="op-published" dateTime="' . Base::formatRSSDate(
+			$headerString .= '<time class="op-published" dateTime="' . Base::formatRSSDate(
 					$this->getPublishedDate()
 				) . '">' . Base::formatUserDate($this->getPublishedDate()) . '</time>';
 		}
 
-		$headerString .= '        </' . $this->getRoot() . '>';
+		if (!empty($this->getAds())) {
+
+			$headerString .= '<section class="op-ad-template">';
+
+			foreach ($this->getAds() as $ad) {
+				$headerString .= $ad->render();
+			}
+
+			$headerString .= '</section>';
+		}
+
+		$headerString .= '</' . $this->getRoot() . '>';
 
 		return $headerString;
 
@@ -309,7 +327,9 @@ class Header extends Base {
 	 */
 	public function setModifiedDate($modifiedDate) {
 
-		$this->_modifiedDate = strtotime($modifiedDate);
+		$this->_modifiedDate = Base::isTimestamp($modifiedDate)
+			? $modifiedDate
+			: strtotime($modifiedDate);
 
 		if (is_null($this->_publishedDate)) {
 			$this->_publishedDate = $this->_modifiedDate;
@@ -343,7 +363,9 @@ class Header extends Base {
 	 */
 	public function setPublishedDate($publishedDate) {
 
-		$this->_publishedDate = strtotime($publishedDate);
+		$this->_publishedDate = Base::isTimestamp($publishedDate)
+			? $publishedDate
+			: strtotime($publishedDate);
 
 		if (is_null($this->_modifiedDate)) {
 			$this->_modifiedDate = $this->_publishedDate;
@@ -358,26 +380,126 @@ class Header extends Base {
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
-	 * @param string $name
-	 * @param bool   $clear
+	 * @param Author  $author
+	 * @param boolean $clear
 	 *
-	 * @return Article
+	 * @return Header
 	 */
-	public function setAuthor($name, $role = null, $contribution = null, $bio = null, $clear = false) {
-
-		/**
-		 * @var Author $author
-		 */
-		$author = Article::createElement('author');
-		$author->setName($name)
-			->setRole($role)
-			->setContribution($contribution)
-			->setBio($bio);
+	public function setAuthor(Author $author, $clear = false) {
 
 		if ($clear) {
 			$this->_authors = [$author];
 		} else {
 			$this->_authors[] = $author;
+		}
+
+		return $this;
+
+	}
+
+	/**
+	 * createAuthor
+	 *
+	 * @author  Christopher M. Black <cblack@devonium.com>
+	 *
+	 * @param string  $name
+	 * @param string  $role
+	 * @param string  $contribution
+	 * @param string  $bio
+	 * @param boolean $clear
+	 *
+	 * @return Header
+	 */
+	public function createAuthor($name, $role = null, $contribution = null, $bio = null, $clear = false) {
+
+		$author = new Author();
+		$author->setName($name)->setRole($role)->setContribution($contribution)->setBio($bio);
+
+		if ($clear) {
+			$this->_authors = [$author];
+		} else {
+			$this->_authors[] = $author;
+		}
+
+		return $this;
+
+	}
+
+	/**
+	 * createMedia
+	 *
+	 * @since   0.1.2
+	 * @version 0.1.2
+	 *
+	 * @author  Christopher M. Black <cblack@devonium.com>
+	 *
+	 * @param   string       $type image or video
+	 * @param   string       $source
+	 * @param   boolean|null $likesEnabled
+	 * @param   boolean|null $commentsEnabled
+	 * @param   string       $presentation
+	 *
+	 * @return Header
+	 */
+	public function createMedia($type, $source, $likesEnabled = null, $commentsEnabled = null, $presentation = null) {
+
+		if ($type == 'image') {
+			return $this->setMedia(new Image($source, $likesEnabled, $commentsEnabled, $presentation));
+		} else {
+			return $this->setMedia(new Video($source, $likesEnabled, $commentsEnabled, $presentation));
+		}
+
+	}
+
+	/**
+	 * getAds
+	 *
+	 * @author  Christopher M. Black <cblack@devonium.com>
+	 *
+	 * @return  Ad[]
+	 */
+	public function getAds() {
+
+		return $this->_ads;
+
+	}
+
+	/**
+	 * createAd
+	 *
+	 * @since   0.1.2
+	 * @version 0.1.2
+	 *
+	 * @author  Christopher M. Black <cblack@devonium.com>
+	 *
+	 * @param string      $source
+	 * @param string|null $width
+	 * @param string|null $height
+	 *
+	 * @return Header
+	 */
+	public function createAd($source, $width = null, $height = null) {
+
+		return $this->setAd(new Ad($source, $width, $height));
+
+	}
+
+	/**
+	 * setAd
+	 *
+	 * @author  Christopher M. Black <cblack@devonium.com>
+	 *
+	 * @param   Ad      $ad
+	 * @param   boolean $append
+	 *
+	 * @return  Header
+	 */
+	public function setAd(Ad $ad, $append = true) {
+
+		if ($append) {
+			$this->_ads[] = $ad;
+		} else {
+			$this->_ads = [$ad];
 		}
 
 		return $this;

@@ -32,9 +32,9 @@ class Interactive extends Base {
 	/**
 	 * Descriptive text for your interactive graphic.
 	 *
-	 * @var \FBIARss\Element\Article\Caption
+	 * @var \FBIARss\Element\Article\Caption[]
 	 */
-	protected $_caption = '';
+	protected $_captions = [];
 
 	/**
 	 * The height of your interactive graphic.
@@ -81,9 +81,10 @@ class Interactive extends Base {
 			$interactiveString .= '<iframe src="' . $this->getSource() . '" ' . $this->getWidth(true) . $height . '></iframe>';
 		}
 
-		if (!empty($this->getCaption())) {
-			$interactiveString .= $this->getCaption()
-				->render();
+		if (!empty($this->getCaptions())) {
+			foreach ($this->getCaptions() as $caption) {
+				$interactiveString .= $caption->render();
+			}
 		}
 
 		$interactiveString .= '</' . $this->getRoot() . '>';
@@ -200,15 +201,15 @@ class Interactive extends Base {
 	}
 
 	/**
-	 * getCaption
+	 * getCaptions
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
-	 * @return  Caption    $_caption
+	 * @return  Caption    $_captions
 	 */
-	public function getCaption() {
+	public function getCaptions() {
 
-		return $this->_caption;
+		return $this->_captions;
 
 	}
 
@@ -218,12 +219,17 @@ class Interactive extends Base {
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
 	 * @param   Caption $caption
+	 * @param   boolean $append
 	 *
 	 * @return  Interactive
 	 */
-	public function setCaption(Caption $caption) {
+	public function setCaption(Caption $caption, $append = true) {
 
-		$this->_caption = $caption;
+		if ($append) {
+			$this->_captions[] = $caption;
+		} else {
+			$this->_captions = [$caption];
+		}
 
 		return $this;
 
@@ -236,23 +242,25 @@ class Interactive extends Base {
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
-	 * @param string $title
-	 * @param string $credit
-	 * @param string $body
-	 * @param string $positioning
-	 * @param string $horizontalAlignment
-	 * @param string $verticalAlignment
+	 * @param   string      $title
+	 * @param   string|null $credit
+	 * @param   string|null $body
+	 * @param   string|null $fontSize
+	 * @param   string|null $positioning
+	 * @param   string|null $horizontalAlignment
+	 * @param   string|null $verticalAlignment
 	 *
 	 * @return Interactive
 	 */
 	public function createCaption($title,
 		$credit = null,
 		$body = null,
+		$fontSize = null,
 		$positioning = null,
 		$horizontalAlignment = null,
 		$verticalAlignment = null) {
 
-		return $this->setCaption(new Caption($title, $credit, $body, $positioning, $horizontalAlignment, $verticalAlignment));
+		return $this->setCaption(new Caption($title, $credit, $body, $fontSize, $positioning, $horizontalAlignment, $verticalAlignment));
 
 	}
 

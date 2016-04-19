@@ -36,14 +36,18 @@ class SimpleXMLElement extends \SimpleXMLElement {
 	/**
 	 * Pretty much like addChild() but wraps the value in CDATA
 	 *
-	 * @param string $name  tag name
-	 * @param string $value tag value
+	 * @param string $name      tag name
+	 * @param string $value     tag value
+	 * @param null   $namespace The tag namespace, if any
 	 *
 	 * @return void
 	 */
-	public function addCdataChild($name, $value) {
+	public function addCdataChild($name, $value, $namespace = null) {
 
-		$child = $this->addChild($name);
+		/**
+		 * @var SimpleXMLElement $child
+		 */
+		$child = $this->addChild($name, null, $namespace);
 		$child->setChildCdataValue($value);
 
 	}

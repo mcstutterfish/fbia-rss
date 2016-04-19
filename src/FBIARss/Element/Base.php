@@ -19,14 +19,18 @@ abstract class Base {
 	const RETURN_SEPARATED_STRING = 2;
 
 	/**
+	 * Default format example: 2015-10-20T09:45:00-05:00
+	 *
 	 * @var string
 	 */
-	protected static $_rssDateFormat = 'D, d M Y H:i:s O';
+	protected static $_rssDateFormat =  \DateTime::ATOM;
 
 	/**
+	 * Default format example: October 20th 2015
+	 *
 	 * @var string
 	 */
-	protected static $_displayDateFormat = 'r';
+	protected static $_displayDateFormat = 'F jS Y';
 
 	/**
 	 * @var string
@@ -98,12 +102,35 @@ abstract class Base {
 	 */
 	public static function formatRSSDate($date = null) {
 
+		$date = self::isTimestamp($date)
+			? $date
+			: (!empty($date)
+				? strtotime($date)
+				: null);
+
 		return date(
 			self::$_rssDateFormat,
 			!is_null($date)
-				? strtotime($date)
+				? $date
 				: time()
 		);
+
+	}
+
+	/**
+	 * Checks if a string is a valid timestamp.
+	 *
+	 * @param  string $timestamp Timestamp to validate.
+	 *
+	 * @return bool
+	 */
+	public static function isTimestamp($timestamp) {
+
+		$check = (is_int($timestamp) OR is_float($timestamp))
+			? $timestamp
+			: (string) (int) $timestamp;
+
+		return ($check === $timestamp) AND ((int) $timestamp <= PHP_INT_MAX) AND ((int) $timestamp >= ~PHP_INT_MAX);
 
 	}
 
@@ -118,10 +145,16 @@ abstract class Base {
 	 */
 	public static function formatUserDate($date = null) {
 
+		$date = self::isTimestamp($date)
+			? $date
+			: (!empty($date)
+				? strtotime($date)
+				: null);
+
 		return date(
 			self::$_displayDateFormat,
 			!is_null($date)
-				? strtotime($date)
+				? $date
 				: time()
 		);
 
@@ -185,7 +218,7 @@ abstract class Base {
 	 */
 	public function isValidURL($url) {
 
-		return (bool) parse_url($url);
+		return filter_var($url, FILTER_VALIDATE_URL) !== FALSE;
 
 	}
 
@@ -215,6 +248,7 @@ abstract class Base {
 	 */
 	public function stripBeginEndParagraphs($text, $stripBeginning = true, $stripEnding = true) {
 
+		$text              = trim($text);
 		$beginningPrefixes = ['<p>', '</p>'];
 		$endingPrefixes    = ['</p>', '<p>'];
 

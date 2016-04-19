@@ -43,7 +43,7 @@ class Head extends Base {
 	/**
 	 * @var string
 	 */
-	protected $_canonicalLink = '=';
+	protected $_canonicalLink = '';
 
 	/**
 	 * @var array
@@ -61,40 +61,40 @@ class Head extends Base {
 	 */
 	public function render(SimpleXMLElement $xmlElement = null) {
 
-		$headString = '        <' . $this->getRoot() . '>';
+		$headString = '<' . $this->getRoot() . '>';
 
 		// Add charset
 		if (!empty($this->getCharset())) {
-			$headString .= '          <meta charset="' . $this->getCharset() . '">';
+			$headString .= '<meta charset="' . $this->getCharset() . '">';
 		}
 
 		// add canonical link
 		if (!empty($this->getCanonicalLink())) {
-			$headString .= '          <link rel="canonical" href="' . $this->getCanonicalLink() . '">';
+			$headString .= '<link rel="canonical" href="' . $this->getCanonicalLink() . '">';
 		}
 
 		// Add markup version
 		if (!empty($this->getMarkupVersion())) {
-			$headString .= '          <meta property="op:markup_version" content="' . $this->getMarkupVersion() . '">';
+			$headString .= '<meta property="op:markup_version" content="' . $this->getMarkupVersion() . '">';
 		}
 
-		$headString .= '          <meta property="fb:use_automatic_ad_placement" content="' . Base::stringifyBoolean(
+		$headString .= '<meta property="fb:use_automatic_ad_placement" content="' . Base::stringifyBoolean(
 				$this->isUseAutomaticAdPlacement()
 			) . '">';
 
 		if (!empty($this->getArticleStyle())) {
-			$headString .= '          <meta property="fb:article_style" content="' . $this->getArticleStyle() . '">';
+			$headString .= '<meta property="fb:article_style" content="' . $this->getArticleStyle() . '">';
 		}
 
 		if (!empty($this->getTags())) {
-			$headString .= '          <meta property="op:tags" content="' . Base::arrayOrSeparatedString(
+			$headString .= '<meta property="op:tags" content="' . Base::arrayOrSeparatedString(
 					$this->getTags(),
 					self::RETURN_SEPARATED_STRING,
 					';'
 				) . '">';
 		}
 
-		$headString .= '        </' . $this->getRoot() . '>';
+		$headString .= '</' . $this->getRoot() . '>';
 
 		return $headString;
 
@@ -135,7 +135,9 @@ class Head extends Base {
 	 */
 	public function setCanonicalLink($canonicalLink) {
 
-		$this->_canonicalLink = $canonicalLink;
+		if ($this->isValidURL($canonicalLink)) {
+			$this->_canonicalLink = $canonicalLink;
+		}
 
 		return $this;
 	}
@@ -184,7 +186,7 @@ class Head extends Base {
 	 */
 	public function setUseAutomaticAdPlacement($useAutomaticAdPlacement) {
 
-		$this->_articleStyle = (boolean) $useAutomaticAdPlacement;
+		$this->_useAutomaticAdPlacement = (boolean) $useAutomaticAdPlacement;
 
 		return $this;
 
@@ -214,6 +216,8 @@ class Head extends Base {
 	 */
 	public function setArticleStyle($articleStyle) {
 
+		$articleStyle = trim($articleStyle);
+		
 		if (empty($articleStyle)) {
 			$this->_articleStyle = null;
 		} else {

@@ -211,23 +211,25 @@ class Map extends Base {
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
-	 * @param string $title
-	 * @param string $credit
-	 * @param string $body
-	 * @param string $positioning
-	 * @param string $horizontalAlignment
-	 * @param string $verticalAlignment
+	 * @param   string      $title
+	 * @param   string|null $credit
+	 * @param   string|null $body
+	 * @param   string|null $fontSize
+	 * @param   string|null $positioning
+	 * @param   string|null $horizontalAlignment
+	 * @param   string|null $verticalAlignment
 	 *
 	 * @return Map
 	 */
 	public function createCaption($title,
 		$credit = null,
 		$body = null,
+		$fontSize = null,
 		$positioning = null,
 		$horizontalAlignment = null,
 		$verticalAlignment = null) {
 
-		return $this->setCaption(new Caption($title, $credit, $body, $positioning, $horizontalAlignment, $verticalAlignment));
+		return $this->setCaption(new Caption($title, $credit, $body, $fontSize, $positioning, $horizontalAlignment, $verticalAlignment));
 
 	}
 

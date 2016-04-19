@@ -78,21 +78,21 @@ class Author extends Base {
 			$authorTitle .= ' (' . $this->getContribution() . ')';
 		}
 
-		$authorString = '        <' . $this->getRoot() . '>';
+		$authorString = '<' . $this->getRoot() . '>';
 
 		// Add subtitle
 		if (!empty($authorTitle)) {
-			$authorString .= '        <a title="' . $authorTitle . '">' . $this->getName() . '</a>';
+			$authorString .= '<a title="' . $authorTitle . '">' . $this->getName() . '</a>';
 		} else {
-			$authorString .= '        <a>' . $this->getName() . '</a>';
+			$authorString .= '<a>' . $this->getName() . '</a>';
 		}
 
-		// add kicker
+		// add bio
 		if (!empty($this->getBio())) {
-			$authorString .= '        ' . $this->getBio();
+			$authorString .= ' ' . $this->getBio();
 		}
 
-		$authorString .= '        </' . $this->getRoot() . '>';
+		$authorString .= '</' . $this->getRoot() . '>';
 
 		return $authorString;
 
@@ -212,7 +212,11 @@ class Author extends Base {
 	 */
 	public function setBio($bio) {
 
-		$this->_bio = $bio;
+		$bio = $this->stripBeginEndParagraphs($bio);
+
+		if (!empty($bio)) {
+			$this->_bio = $bio;
+		}
 
 		return $this;
 

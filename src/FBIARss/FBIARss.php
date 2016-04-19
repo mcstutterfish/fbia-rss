@@ -2,28 +2,29 @@
 namespace FBIARss;
 
 use FBIARss\Element\ArticleItem;
+use FBIARss\Element\Base as BaseElement;
 
 /**
  * Class FBIARss
  *
  * @package     FBIARss
  *
- * @author      Christopher M. Black <cblack@devonium.com>
- *
- * @version     0.1.1
  * @since       0.1.1
+ * @version     0.1.2
+ *
+ * @author      Christopher M. Black <cblack@devonium.com>
  */
 class FBIARss {
 
 	/**
 	 * @var string
 	 */
-	protected $version = '';
+	protected $version = '2.0';
 
 	/**
 	 * @var string
 	 */
-	protected $encoding = '';
+	protected $encoding = 'UTF-8';
 
 	/**
 	 * @var array
@@ -46,12 +47,17 @@ class FBIARss {
 	protected $limit = 0;
 
 	/**
-	 * @param string $version
-	 * @param string $encoding
+	 * @since   0.1.1
+	 * @version 0.1.1
 	 *
-	 * @return FBIARss
+	 * @author  Christopher M. Black <cblack@devonium.com>
+	 *
+	 * @param   string $version
+	 * @param   string $encoding
+	 *
+	 * @return  \FBIARss
 	 */
-	public function feed($version, $encoding) {
+	public function feed($version = '2.0', $encoding = 'UTF-8') {
 
 		$this->version  = $version;
 		$this->encoding = $encoding;
@@ -63,17 +69,20 @@ class FBIARss {
 	/**
 	 * channel
 	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
+	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
-	 * @param array $parameters     valid keys:
-	 *                              - title (required)
-	 *                              - link (required)
-	 *                              - description (required)
-	 *                              - language
-	 *                              - lastBuildDate (autoadded if not passed)
+	 * @param   array $parameters           valid keys:
+	 *                                      - title (required)
+	 *                                      - link (required)
+	 *                                      - description (required)
+	 *                                      - language
+	 *                                      - lastBuildDate (autoadded if not passed)
 	 *
-	 * @return FBIARss
-	 * @throws \Exception
+	 * @return  \FBIARss
+	 * @throws  \Exception
 	 */
 	public function channel($parameters) {
 
@@ -108,28 +117,38 @@ class FBIARss {
 	 *
 	 * create an article object to be used when generating an article / Instant Article article elements
 	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
+	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
-	 * @return ArticleItem
+	 * @return  \FBIARss\Element\Article
 	 */
 	public function createArticle() {
 
-		return new ArticleItem();
+		$ArticleItem = new ArticleItem();
+
+		$this->articles[] = $ArticleItem;
+
+		return $ArticleItem->getArticle();
 
 	}
 
 	/**
-	 * completeArticle
+	 * attachArticle
 	 *
-	 * Add the article object created with createArticle after configuring all article elements
+	 * Add the article object created externally after configuring all article elements
+	 *
+	 * @since   0.1.1
+	 * @version 0.1.2
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
-	 * @param ArticleItem $articleItem
+	 * @param   ArticleItem $articleItem
 	 *
-	 * @return FBIARss
+	 * @return  \FBIARss
 	 */
-	public function completeArticle(ArticleItem $articleItem) {
+	public function attachArticle(ArticleItem $articleItem) {
 
 		$this->articles[] = $articleItem;
 
@@ -138,9 +157,16 @@ class FBIARss {
 	}
 
 	/**
-	 * @param int $limit
+	 * limit
 	 *
-	 * @return FBIARss
+	 * @since   0.1.1
+	 * @version 0.1.1
+	 *
+	 * @author  Christopher M. Black <cblack@devonium.com>
+	 *
+	 * @param   integer $limit
+	 *
+	 * @return  \FBIARss
 	 */
 	public function limit($limit) {
 
@@ -153,31 +179,44 @@ class FBIARss {
 	}
 
 	/**
-	 * @param $filename
+	 * save
 	 *
-	 * @return mixed
+	 * @since   0.1.1
+	 * @version 0.1.1
+	 *
+	 * @author  Christopher M. Black <cblack@devonium.com>
+	 *
+	 * @param   string $filename
+	 *
+	 * @return  mixed
 	 */
 	public function save($filename) {
 
-		return $this->render()
-			->asXML($filename);
+		return $this->render()->asXML($filename);
 
 	}
 
 	/**
+	 * render
+	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
+	 *
+	 * @author  Christopher M. Black <cblack@devonium.com>
+	 *
 	 * @return SimpleXMLElement
 	 */
 	public function render() {
 
 		$xml = new SimpleXMLElement(
-			'<?xml version="1.0" encoding="' . $this->encoding . '"?><rss version="' . $this->version . '" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:wfw="http://wellformedweb.org/CommentAPI/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:sy="http://purl.org/rss/1.0/modules/syndication/" xmlns:slash="http://purl.org/rss/1.0/modules/slash/"></rss>',
+			'<?xml version="1.0" encoding="' . $this->encoding . '"?><rss version="' . $this->version . '" xmlns:content="http://purl.org/rss/1.0/modules/content/"></rss>',
 			LIBXML_NOERROR | LIBXML_ERR_NONE | LIBXML_ERR_FATAL
 		);
 
-		$xml->addChild('channel');
+		$channel = $xml->addChild('channel');
 
 		foreach ($this->channel as $kC => $vC) {
-			$xml->channel->addChild($kC, $vC);
+			$channel->addChild($kC, $vC);
 		}
 
 		$articles = $this->limit > 0
@@ -185,19 +224,7 @@ class FBIARss {
 			: $this->articles;
 
 		foreach ($articles as $article) {
-			$elem_item = $xml->channel->addChild('item');
-
-			foreach ($article as $kI => $vI) {
-				$options = explode('|', $kI);
-
-				if (in_array('cdata', $options)) {
-					$elem_item->addCdataChild($options[0], $vI);
-				} elseif (strpos($options[0], ':') !== false) {
-					$elem_item->addChild($options[0], $vI, 'http://purl.org/dc/elements/1.1/');
-				} else {
-					$elem_item->addChild($options[0], $vI);
-				}
-			}
+			$article->render($channel);
 		}
 
 		return $xml;
@@ -205,12 +232,18 @@ class FBIARss {
 	}
 
 	/**
+	 * __toString
+	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
+	 *
+	 * @author  Christopher M. Black <cblack@devonium.com>
+	 *
 	 * @return mixed
 	 */
 	public function __toString() {
 
-		return $this->render()
-			->asXML();
+		return $this->render()->asXML();
 
 	}
 

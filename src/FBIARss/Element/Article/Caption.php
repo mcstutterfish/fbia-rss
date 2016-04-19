@@ -118,16 +118,18 @@ class Caption extends Base {
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
-	 * @param string $title
-	 * @param string $credit
-	 * @param string $body
-	 * @param string $positioning
-	 * @param string $horizontalAlignment
-	 * @param string $verticalAlignment
+	 * @param string|null $title
+	 * @param string|null $credit
+	 * @param string|null $body
+	 * @param string|null $fontSize
+	 * @param string|null $positioning
+	 * @param string|null $horizontalAlignment
+	 * @param string|null $verticalAlignment
 	 */
 	public function __construct($title = null,
 		$credit = null,
 		$body = null,
+		$fontSize = null,
 		$positioning = null,
 		$horizontalAlignment = null,
 		$verticalAlignment = null) {
@@ -142,6 +144,10 @@ class Caption extends Base {
 
 			if (!empty($body)) {
 				$this->setBody($body);
+			}
+
+			if (!empty($fontSize)) {
+				$this->setFontSize($fontSize);
 			}
 
 			if (!empty($positioning)) {

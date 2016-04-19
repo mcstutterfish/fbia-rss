@@ -503,6 +503,35 @@ class Media extends Base {
 	}
 
 	/**
+	 * createCaption
+	 *
+	 * Setup Caption object
+	 *
+	 * @author  Christopher M. Black <cblack@devonium.com>
+	 *
+	 * @param   string      $title
+	 * @param   string|null $credit
+	 * @param   string|null $body
+	 * @param   string|null $fontSize
+	 * @param   string|null $positioning
+	 * @param   string|null $horizontalAlignment
+	 * @param   string|null $verticalAlignment
+	 *
+	 * @return Interactive
+	 */
+	public function createCaption($title,
+		$credit = null,
+		$body = null,
+		$fontSize = null,
+		$positioning = null,
+		$horizontalAlignment = null,
+		$verticalAlignment = null) {
+
+		return $this->setCaption(new Caption($title, $credit, $body, $fontSize, $positioning, $horizontalAlignment, $verticalAlignment));
+
+	}
+
+	/**
 	 * _validPresentation
 	 *
 	 * @since   0.1.1

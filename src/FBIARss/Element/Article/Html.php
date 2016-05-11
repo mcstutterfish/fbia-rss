@@ -10,10 +10,10 @@ use FBIARss\SimpleXMLElement;
  * @package     FBIARss\Element
  * @subpackage  FBIARss\Element\Article
  *
- * @author      Christopher M. Black <cblack@devonium.com>
- *
  * @version     0.1.1
- * @since       0.1.1
+ * @since       0.1.4
+ *
+ * @author      Christopher M. Black <cblack@devonium.com>
  */
 class Html extends Base {
 
@@ -32,6 +32,9 @@ class Html extends Base {
 	/**
 	 * render
 	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
+	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
 	 * @param SimpleXMLElement $xmlElement
@@ -47,6 +50,9 @@ class Html extends Base {
 	/**
 	 * getHtmlItems
 	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
+	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
 	 * @return  array    $_htmlItems
@@ -59,6 +65,9 @@ class Html extends Base {
 
 	/**
 	 * setHtmlItems
+	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
@@ -77,6 +86,9 @@ class Html extends Base {
 	/**
 	 * addHtmlItem
 	 *
+	 * @since   0.1.1
+	 * @version 0.1.4
+	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
 	 * @param   string $htmlItem
@@ -85,10 +97,16 @@ class Html extends Base {
 	 */
 	public function addHtmlItem($htmlItem) {
 
-		$htmlItem = trim($htmlItem);
+		$htmlItem = $this->stripBeginEndParagraphs(trim($htmlItem));
 
 		if (!empty($htmlItem)) {
+
+			if (substr_count('<p>', strtolower($htmlItem)) !== substr_count('</p>', strtolower($htmlItem))) {
+				$htmlItem = str_ireplace(['<p>', '</p>'], ['', ''], $htmlItem);
+			}
+
 			$this->_htmlItems[] = $htmlItem;
+
 		}
 
 		return $this;

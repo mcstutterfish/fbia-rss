@@ -47,9 +47,9 @@ class Media extends Base {
 	/**
 	 * Descriptive text for your Media. May also include attribution to the originator or creator of this media.
 	 *
-	 * @var \FBIARss\Element\Article\Caption[]
+	 * @var \FBIARss\Element\Article\Caption
 	 */
-	protected $_captions = [];
+	protected $_caption = null;
 
 	/**
 	 * Enables readers to like this Media.
@@ -125,7 +125,7 @@ class Media extends Base {
 	 * render
 	 *
 	 * @since   0.1.1
-	 * @version 0.1.1
+	 * @version 0.1.4
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
@@ -148,10 +148,8 @@ class Media extends Base {
 				: '') . '>';
 		$mediaString .= '<img src="' . $this->getSource() . '" />';
 
-		if (!empty($this->getCaptions())) {
-			foreach ($this->getCaptions() as $caption) {
-				$mediaString .= $caption->render();
-			}
+		if (!empty($this->getCaption())) {
+			$mediaString .= $this->getCaption()->render();
 		}
 
 		if (!empty($this->getAudio())) {
@@ -362,6 +360,39 @@ class Media extends Base {
 	}
 
 	/**
+	 * getCaption
+	 *
+	 * @author  Christopher M. Black <cblack@devonium.com>
+	 *
+	 * @return  Caption    $_caption
+	 */
+	public function getCaption() {
+
+		return $this->_caption;
+
+	}
+
+	/**
+	 * setCaption
+	 *
+	 * @since   0.1.1
+	 * @version 0.1.4
+	 *
+	 * @author  Christopher M. Black <cblack@devonium.com>
+	 *
+	 * @param   Caption $caption
+	 *
+	 * @return  Media
+	 */
+	public function setCaption(Caption $caption) {
+
+		$this->_caption = $caption;
+
+		return $this;
+
+	}
+
+	/**
 	 * getAudio
 	 *
 	 * @since   0.1.1
@@ -432,12 +463,7 @@ class Media extends Base {
 	 *
 	 * @return Media
 	 */
-	public function setLocation($latitude,
-		$longitude,
-		$title = null,
-		$radius = null,
-		$pivot = null,
-		$style = null) {
+	public function setLocation($latitude, $longitude, $title = null, $radius = null, $pivot = null, $style = null) {
 
 		$this->_location = new Location($latitude, $longitude, $title, $radius, $pivot, $style);
 
@@ -468,66 +494,37 @@ class Media extends Base {
 	}
 
 	/**
-	 * getCaptions
-	 *
-	 * @author  Christopher M. Black <cblack@devonium.com>
-	 *
-	 * @return  Caption    $_captions
-	 */
-	public function getCaptions() {
-
-		return $this->_captions;
-
-	}
-
-	/**
-	 * setCaption
-	 *
-	 * @author  Christopher M. Black <cblack@devonium.com>
-	 *
-	 * @param   Caption $caption
-	 * @param   boolean $append
-	 *
-	 * @return  Interactive
-	 */
-	public function setCaption(Caption $caption, $append = true) {
-
-		if ($append) {
-			$this->_captions[] = $caption;
-		} else {
-			$this->_captions = [$caption];
-		}
-
-		return $this;
-
-	}
-
-	/**
 	 * createCaption
 	 *
 	 * Setup Caption object
 	 *
+	 * @since   0.1.1
+	 * @version 0.1.4
+	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
-	 * @param   string      $title
-	 * @param   string|null $credit
-	 * @param   string|null $body
-	 * @param   string|null $fontSize
-	 * @param   string|null $positioning
-	 * @param   string|null $horizontalAlignment
-	 * @param   string|null $verticalAlignment
+	 * @param array $options        valid options:
+	 *                              - title
+	 *                              - titleFontSize
+	 *                              - titlePositioning
+	 *                              - titleHorizontalAlignment
+	 *                              - titleVerticalAlignment
+	 *                              - credit
+	 *                              - creditFontSize
+	 *                              - creditPositioning
+	 *                              - creditHorizontalAlignment
+	 *                              - creditVerticalAlignment
+	 *                              - body
+	 *                              - fontSize (body font size if individual elements are aligned)
+	 *                              - positioning (body positioning if individual elements are aligned)
+	 *                              - horizontalAlignment (body horizontal alignment  if individual elements are aligned)
+	 *                              - verticalAlignment (body vertical alignment if individual elements are aligned)
 	 *
-	 * @return Interactive
+	 * @return Media
 	 */
-	public function createCaption($title,
-		$credit = null,
-		$body = null,
-		$fontSize = null,
-		$positioning = null,
-		$horizontalAlignment = null,
-		$verticalAlignment = null) {
+	public function createCaption($options = []) {
 
-		return $this->setCaption(new Caption($title, $credit, $body, $fontSize, $positioning, $horizontalAlignment, $verticalAlignment));
+		return $this->setCaption(new Caption($options));
 
 	}
 

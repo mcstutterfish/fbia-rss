@@ -134,11 +134,13 @@ class Header extends Base {
 				) . '">' . Base::formatUserDate($this->getPublishedDate()) . '</time>';
 		}
 
-		if (!empty($this->getAds())) {
+		$ads = $this->getAds();
+
+		if (!empty($ads)) {
 
 			$headerString .= '<section class="op-ad-template">';
 
-			foreach ($this->getAds() as $ad) {
+			foreach ($ads as $ad) {
 				$headerString .= $ad->render();
 			}
 

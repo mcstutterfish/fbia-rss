@@ -10,10 +10,10 @@ use FBIARss\SimpleXMLElement;
  * @package     FBIARss\Element
  * @subpackage  FBIARss\Element\Article
  *
- * @author      Christopher M. Black <cblack@devonium.com>
- *
- * @version     0.1.1
  * @since       0.1.1
+ * @version     0.1.4
+ *
+ * @author      Christopher M. Black <cblack@devonium.com>
  */
 class Interactive extends Base {
 
@@ -32,9 +32,9 @@ class Interactive extends Base {
 	/**
 	 * Descriptive text for your interactive graphic.
 	 *
-	 * @var \FBIARss\Element\Article\Caption[]
+	 * @var \FBIARss\Element\Article\Caption
 	 */
-	protected $_captions = [];
+	protected $_caption = null;
 
 	/**
 	 * The height of your interactive graphic.
@@ -52,6 +52,9 @@ class Interactive extends Base {
 
 	/**
 	 * render
+	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
@@ -81,8 +84,8 @@ class Interactive extends Base {
 			$interactiveString .= '<iframe src="' . $this->getSource() . '" ' . $this->getWidth(true) . $height . '></iframe>';
 		}
 
-		if (!empty($this->getCaptions())) {
-			foreach ($this->getCaptions() as $caption) {
+		if (!empty($this->getCaption())) {
+			foreach ($this->getCaption() as $caption) {
 				$interactiveString .= $caption->render();
 			}
 		}
@@ -96,6 +99,9 @@ class Interactive extends Base {
 	/**
 	 * getSource
 	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
+	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
 	 * @return  string    $_source
@@ -108,6 +114,9 @@ class Interactive extends Base {
 
 	/**
 	 * setSource
+	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
@@ -126,6 +135,9 @@ class Interactive extends Base {
 
 	/**
 	 * getHeight
+	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
@@ -146,6 +158,9 @@ class Interactive extends Base {
 	/**
 	 * setHeight
 	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
+	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
 	 * @param string $height
@@ -162,6 +177,9 @@ class Interactive extends Base {
 
 	/**
 	 * getWidth
+	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
@@ -182,6 +200,9 @@ class Interactive extends Base {
 	/**
 	 * setWidth
 	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
+	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
 	 * @param string $width
@@ -201,35 +222,36 @@ class Interactive extends Base {
 	}
 
 	/**
-	 * getCaptions
+	 * getCaption
+	 *
+	 * @since   0.1.1
+	 * @version 0.1.4
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
-	 * @return  Caption    $_captions
+	 * @return  Caption    $_caption
 	 */
-	public function getCaptions() {
+	public function getCaption() {
 
-		return $this->_captions;
+		return $this->_caption;
 
 	}
 
 	/**
 	 * setCaption
 	 *
+	 * @since   0.1.1
+	 * @version 0.1.4
+	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
 	 * @param   Caption $caption
-	 * @param   boolean $append
 	 *
 	 * @return  Interactive
 	 */
-	public function setCaption(Caption $caption, $append = true) {
+	public function setCaption(Caption $caption) {
 
-		if ($append) {
-			$this->_captions[] = $caption;
-		} else {
-			$this->_captions = [$caption];
-		}
+		$this->_caption = $caption;
 
 		return $this;
 
@@ -240,27 +262,33 @@ class Interactive extends Base {
 	 *
 	 * Setup Caption object
 	 *
+	 * @since   0.1.1
+	 * @version 0.1.4
+	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
-	 * @param   string      $title
-	 * @param   string|null $credit
-	 * @param   string|null $body
-	 * @param   string|null $fontSize
-	 * @param   string|null $positioning
-	 * @param   string|null $horizontalAlignment
-	 * @param   string|null $verticalAlignment
+	 * @param array $options        valid options:
+	 *                              - title
+	 *                              - titleFontSize
+	 *                              - titlePositioning
+	 *                              - titleHorizontalAlignment
+	 *                              - titleVerticalAlignment
+	 *                              - credit
+	 *                              - creditFontSize
+	 *                              - creditPositioning
+	 *                              - creditHorizontalAlignment
+	 *                              - creditVerticalAlignment
+	 *                              - body
+	 *                              - fontSize (body font size if individual elements are aligned)
+	 *                              - positioning (body positioning if individual elements are aligned)
+	 *                              - horizontalAlignment (body horizontal alignment  if individual elements are aligned)
+	 *                              - verticalAlignment (body vertical alignment if individual elements are aligned)
 	 *
 	 * @return Interactive
 	 */
-	public function createCaption($title,
-		$credit = null,
-		$body = null,
-		$fontSize = null,
-		$positioning = null,
-		$horizontalAlignment = null,
-		$verticalAlignment = null) {
+	public function createCaption($options = []) {
 
-		return $this->setCaption(new Caption($title, $credit, $body, $fontSize, $positioning, $horizontalAlignment, $verticalAlignment));
+		return $this->setCaption(new Caption($options));
 
 	}
 

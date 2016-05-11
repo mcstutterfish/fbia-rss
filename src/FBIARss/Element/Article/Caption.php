@@ -10,10 +10,10 @@ use FBIARss\SimpleXMLElement;
  * @package     FBIARss\Element
  * @subpackage  FBIARss\Element\Article
  *
- * @author      Christopher M. Black <cblack@devonium.com>
- *
- * @version     0.1.1
  * @since       0.1.1
+ * @version     0.1.4
+ *
+ * @author      Christopher M. Black <cblack@devonium.com>
  */
 class Caption extends Base {
 
@@ -49,6 +49,20 @@ class Caption extends Base {
 	 * @var string
 	 */
 	protected $_fontSize = '';
+
+	/**
+	 * The size of the font title text within its container.
+	 *
+	 * @var string
+	 */
+	protected $_titleFontSize = '';
+
+	/**
+	 * The size of the font credit text within its container.
+	 *
+	 * @var string
+	 */
+	protected $_creditFontSize = '';
 
 	/**
 	 * The horizontal alignment of the caption text within its container.
@@ -116,50 +130,81 @@ class Caption extends Base {
 	/**
 	 * Caption constructor.
 	 *
+	 * @since   0.1.1
+	 * @version 0.1.4
+	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
-	 * @param string|null $title
-	 * @param string|null $credit
-	 * @param string|null $body
-	 * @param string|null $fontSize
-	 * @param string|null $positioning
-	 * @param string|null $horizontalAlignment
-	 * @param string|null $verticalAlignment
+	 * @param array $options        valid options:
+	 *                              - title
+	 *                              - titleFontSize
+	 *                              - titlePositioning
+	 *                              - titleHorizontalAlignment
+	 *                              - titleVerticalAlignment
+	 *                              - credit
+	 *                              - creditFontSize
+	 *                              - creditPositioning
+	 *                              - creditHorizontalAlignment
+	 *                              - creditVerticalAlignment
+	 *                              - body
+	 *                              - fontSize (body font size if individual elements are aligned)
+	 *                              - positioning (body positioning if individual elements are aligned)
+	 *                              - horizontalAlignment (body horizontal alignment  if individual elements are aligned)
+	 *                              - verticalAlignment (body vertical alignment if individual elements are aligned)
 	 */
-	public function __construct($title = null,
-		$credit = null,
-		$body = null,
-		$fontSize = null,
-		$positioning = null,
-		$horizontalAlignment = null,
-		$verticalAlignment = null) {
+	public function __construct($options = []) {
 
-		if (!is_null($title)) {
-			
-			$this->setTitle($title);
+		if (!empty($options) && !empty($options['title'])) {
 
-			if (!empty($credit)) {
-				$this->setCredit($credit);
+			$this->setTitle($options['title']);
+
+			if (!empty($options['titlePositioning'])) {
+				$this->setTitlePositioning($options['titlePositioning']);
 			}
 
-			if (!empty($body)) {
-				$this->setBody($body);
+			if (!empty($options['titleHorizontalAlignment'])) {
+				$this->setTitleHorizontalAlignment($options['titleHorizontalAlignment']);
 			}
 
-			if (!empty($fontSize)) {
-				$this->setFontSize($fontSize);
+			if (!empty($options['titleVerticalAlignment'])) {
+				$this->setTitleVerticalAlignment($options['titleVerticalAlignment']);
 			}
 
-			if (!empty($positioning)) {
-				$this->setPositioning($positioning);
+			// Check for and set credit vars
+			if (!empty($options['credit'])) {
+				$this->setCredit($options['credit']);
 			}
 
-			if (!empty($horizontalAlignment)) {
-				$this->setHorizontalAlignment($horizontalAlignment);
+			if (!empty($options['creditPositioning'])) {
+				$this->setCreditPositioning($options['creditPositioning']);
 			}
 
-			if (!empty($verticalAlignment)) {
-				$this->setVerticalAlignment($verticalAlignment);
+			if (!empty($options['creditHorizontalAlignment'])) {
+				$this->setCreditHorizontalAlignment($options['creditHorizontalAlignment']);
+			}
+
+			if (!empty($options['creditVerticalAlignment'])) {
+				$this->setCreditVerticalAlignment($options['creditVerticalAlignment']);
+			}
+
+			if (!empty($options['body'])) {
+				$this->setBody($options['body']);
+			}
+
+			if (!empty($options['fontSize'])) {
+				$this->setFontSize($options['fontSize']);
+			}
+
+			if (!empty($options['positioning'])) {
+				$this->setPositioning($options['positioning']);
+			}
+
+			if (!empty($options['horizontalAlignment'])) {
+				$this->setHorizontalAlignment($options['horizontalAlignment']);
+			}
+
+			if (!empty($options['verticalAlignment'])) {
+				$this->setVerticalAlignment($options['verticalAlignment']);
 			}
 
 		}
@@ -169,12 +214,15 @@ class Caption extends Base {
 	/**
 	 * render
 	 *
+	 * @since   0.1.1
+	 * @version 0.1.4
+	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
-	 * @param SimpleXMLElement $xmlElement
+	 * @param   SimpleXMLElement $xmlElement
 	 *
-	 * @return string
-	 * @throws \Exception
+	 * @return  string
+	 * @throws  \Exception
 	 */
 	public function render(SimpleXMLElement $xmlElement = null) {
 
@@ -209,11 +257,17 @@ class Caption extends Base {
 		// setup title
 		$classString = '';
 
-		if (!empty($this->getTitlePositioning()) || !empty($this->getTitleHorizontalAlignment(
-			)) || !empty($this->getTitleVerticalAlignment())
-		) {
+		if (!empty($this->getTitlePositioning()) || !empty($this->getTitleFontSize()) || !empty($this->getTitleHorizontalAlignment()) || !empty($this->getTitleVerticalAlignment())) {
 
 			$classString = $this->getTitlePositioning();
+
+			if (!empty($this->getTitleFontSize())) {
+
+				$classString = empty($classString)
+					? $this->getTitleFontSize()
+					: $classString . ' ' . $this->getTitleFontSize();
+
+			}
 
 			if (!empty($this->getTitleHorizontalAlignment())) {
 
@@ -245,11 +299,17 @@ class Caption extends Base {
 		}
 
 		// setup credit
-		if (!empty($this->getCreditPositioning()) || !empty($this->getCreditHorizontalAlignment(
-			)) || !empty($this->getCreditVerticalAlignment())
-		) {
+		if (!empty($this->getCreditPositioning()) || !empty($this->getCreditFontSize()) || !empty($this->getCreditHorizontalAlignment()) || !empty($this->getCreditVerticalAlignment())) {
 
 			$classString = $this->getCreditPositioning();
+
+			if (!empty($this->getCreditFontSize())) {
+
+				$classString = empty($classString)
+					? $this->getCreditFontSize()
+					: $classString . ' ' . $this->getCreditFontSize();
+
+			}
 
 			if (!empty($this->getCreditHorizontalAlignment())) {
 
@@ -284,6 +344,9 @@ class Caption extends Base {
 	/**
 	 * getTitle
 	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
+	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
 	 * @return  string    $_title
@@ -296,6 +359,9 @@ class Caption extends Base {
 
 	/**
 	 * setTitle
+	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
@@ -314,6 +380,9 @@ class Caption extends Base {
 	/**
 	 * getPositioning
 	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
+	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
 	 * @return  string    $_positioning
@@ -326,6 +395,9 @@ class Caption extends Base {
 
 	/**
 	 * setPositioning
+	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
@@ -345,6 +417,9 @@ class Caption extends Base {
 	/**
 	 * getFontSize
 	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
+	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
 	 * @return  string    $_fontSize
@@ -357,6 +432,9 @@ class Caption extends Base {
 
 	/**
 	 * setFontSize
+	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
@@ -376,6 +454,9 @@ class Caption extends Base {
 	/**
 	 * getTitlePositioning
 	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
+	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
 	 * @return  string    $_titlePositioning
@@ -388,6 +469,9 @@ class Caption extends Base {
 
 	/**
 	 * setTitlePositioning
+	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
@@ -404,7 +488,46 @@ class Caption extends Base {
 	}
 
 	/**
+	 * getTitleFontSize
+	 *
+	 * @since   0.1.4
+	 * @version 0.1.4
+	 *
+	 * @author  Christopher M. Black <cblack@devonium.com>
+	 *
+	 * @return  string    $_titleFontSize
+	 */
+	public function getTitleFontSize() {
+
+		return $this->_titleFontSize;
+
+	}
+
+	/**
+	 * setTitleFontSize
+	 *
+	 * @since   0.1.4
+	 * @version 0.1.4
+	 *
+	 * @author  Christopher M. Black <cblack@devonium.com>
+	 *
+	 * @param   string $titleFontSize
+	 *
+	 * @return  Caption
+	 */
+	public function setTitleFontSize($titleFontSize) {
+
+		$this->_titleFontSize = $titleFontSize;
+
+		return $this;
+
+	}
+
+	/**
 	 * getTitleHorizontalAlignment
+	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
@@ -418,6 +541,9 @@ class Caption extends Base {
 
 	/**
 	 * setTitleHorizontalAlignment
+	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
@@ -436,6 +562,9 @@ class Caption extends Base {
 	/**
 	 * getTitleVerticalAlignment
 	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
+	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
 	 * @return  string    $_titleVerticalAlignment
@@ -448,6 +577,9 @@ class Caption extends Base {
 
 	/**
 	 * setTitleVerticalAlignment
+	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
@@ -466,6 +598,9 @@ class Caption extends Base {
 	/**
 	 * getBody
 	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
+	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
 	 * @return  string    $_body
@@ -478,6 +613,9 @@ class Caption extends Base {
 
 	/**
 	 * setBody
+	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
@@ -496,6 +634,9 @@ class Caption extends Base {
 	/**
 	 * getCreditPositioning
 	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
+	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
 	 * @return  string    $_creditPositioning
@@ -508,6 +649,9 @@ class Caption extends Base {
 
 	/**
 	 * setCreditPositioning
+	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
@@ -524,7 +668,46 @@ class Caption extends Base {
 	}
 
 	/**
+	 * getCreditFontSize
+	 *
+	 * @since   0.1.4
+	 * @version 0.1.4
+	 *
+	 * @author  Christopher M. Black <cblack@devonium.com>
+	 *
+	 * @return  string    $_creditFontSize
+	 */
+	public function getCreditFontSize() {
+
+		return $this->_creditFontSize;
+
+	}
+
+	/**
+	 * setCreditFontSize
+	 *
+	 * @since   0.1.4
+	 * @version 0.1.4
+	 *
+	 * @author  Christopher M. Black <cblack@devonium.com>
+	 *
+	 * @param   string $creditFontSize
+	 *
+	 * @return  Caption
+	 */
+	public function setCreditFontSize($creditFontSize) {
+
+		$this->_creditFontSize = $creditFontSize;
+
+		return $this;
+
+	}
+
+	/**
 	 * getCreditHorizontalAlignment
+	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
@@ -538,6 +721,9 @@ class Caption extends Base {
 
 	/**
 	 * setCreditHorizontalAlignment
+	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
@@ -556,6 +742,9 @@ class Caption extends Base {
 	/**
 	 * getCreditVerticalAlignment
 	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
+	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
 	 * @return  string    $_creditVerticalAlignment
@@ -568,6 +757,9 @@ class Caption extends Base {
 
 	/**
 	 * setCreditVerticalAlignment
+	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
@@ -586,6 +778,9 @@ class Caption extends Base {
 	/**
 	 * getCredit
 	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
+	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
 	 * @return  string    $_credit
@@ -597,133 +792,10 @@ class Caption extends Base {
 	}
 
 	/**
-	 * _validFontSize
-	 *
-	 * @author  Christopher M. Black <cblack@devonium.com>
-	 *
-	 * @param   string $fontSize
-	 *
-	 * @return string
-	 */
-	protected function _validFontSize($fontSize) {
-
-		$validOptions = [
-			'medium' => 'op-medium',
-			'large' => 'op-large',
-			'extra-large' => 'op-extra-large',
-			'extralarge' => 'op-extra-large',
-			'm' => 'op-medium',
-			'l' => 'op-large',
-			'xl' => 'op-extra-large'
-		];
-
-		$fontSize = strtolower(trim($fontSize));
-
-		if (in_array($fontSize, $validOptions)) {
-			return $fontSize;
-		} elseif (array_key_exists($fontSize, $validOptions)) {
-			return $validOptions[$fontSize];
-		}
-
-		return '';
-
-	}
-
-	/**
-	 * _validPositioning
-	 *
-	 * @author  Christopher M. Black <cblack@devonium.com>
-	 *
-	 * @param   string $positioning
-	 *
-	 * @return string
-	 */
-	protected function _validPositioning($positioning) {
-
-		$validOptions = [
-			'below' => 'op-vertical-below',
-			'above' => 'op-vertical-above',
-			'center' => 'op-vertical-center',
-			'vertical-below' => 'op-vertical-below',
-			'vertical-above' => 'op-vertical-above',
-			'vertical-center' => 'op-vertical-center'
-		];
-
-		$positioning = strtolower(trim($positioning));
-
-		if (in_array($positioning, $validOptions)) {
-			return $positioning;
-		} elseif (array_key_exists($positioning, $validOptions)) {
-			return $validOptions[$positioning];
-		}
-
-		return '';
-
-	}
-
-	/**
-	 * _validHorizontalAlignment
-	 *
-	 * @author  Christopher M. Black <cblack@devonium.com>
-	 *
-	 * @param   string $horizontalAlignment
-	 *
-	 * @return string
-	 */
-	protected function _validHorizontalAlignment($horizontalAlignment) {
-
-		$validOptions = [
-			'left' => 'op-left',
-			'center' => 'op-center',
-			'right' => 'op-right'
-		];
-
-		$horizontalAlignment = strtolower(trim($horizontalAlignment));
-
-		if (in_array($horizontalAlignment, $validOptions)) {
-			return $horizontalAlignment;
-		} elseif (array_key_exists($horizontalAlignment, $validOptions)) {
-			return $validOptions[$horizontalAlignment];
-		}
-
-		return '';
-
-	}
-
-	/**
-	 * _validVerticalAlignment
-	 *
-	 * @author  Christopher M. Black <cblack@devonium.com>
-	 *
-	 * @param   string $verticalAlignment
-	 *
-	 * @return string
-	 */
-	protected function _validVerticalAlignment($verticalAlignment) {
-
-		$validOptions = [
-			'bottom' => 'op-vertical-bottom',
-			'center' => 'op-vertical-center',
-			'top' => 'op-vertical-top',
-			'vertical-bottom' => 'op-vertical-bottom',
-			'vertical-center' => 'op-vertical-center',
-			'vertical-top' => 'op-vertical-top'
-		];
-
-		$verticalAlignment = strtolower(trim($verticalAlignment));
-
-		if (in_array($verticalAlignment, $validOptions)) {
-			return $verticalAlignment;
-		} elseif (array_key_exists($verticalAlignment, $validOptions)) {
-			return $validOptions[$verticalAlignment];
-		}
-
-		return '';
-
-	}
-
-	/**
 	 * setCredit
+	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
@@ -742,6 +814,9 @@ class Caption extends Base {
 	/**
 	 * getHorizontalAlignment
 	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
+	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
 	 * @return  string    $_horizontalAlignment
@@ -754,6 +829,9 @@ class Caption extends Base {
 
 	/**
 	 * setHorizontalAlignment
+	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
@@ -773,6 +851,9 @@ class Caption extends Base {
 	/**
 	 * getVerticalAlignment
 	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
+	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
 	 * @return  string    $_verticalAlignment
@@ -786,6 +867,9 @@ class Caption extends Base {
 	/**
 	 * setVerticalAlignment
 	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
+	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
 	 * @param   string $verticalAlignment
@@ -798,6 +882,144 @@ class Caption extends Base {
 		$this->_verticalAlignment = $this->_validVerticalAlignment($verticalAlignment);
 
 		return $this;
+
+	}
+
+	/**
+	 * _validFontSize
+	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
+	 *
+	 * @author  Christopher M. Black <cblack@devonium.com>
+	 *
+	 * @param   string $fontSize
+	 *
+	 * @return string
+	 */
+	protected function _validFontSize($fontSize) {
+
+		$validOptions = [
+			'medium' => 'op-medium',
+			'large' => 'op-large',
+			'extra-large' => 'op-extra-large',
+			'extralarge' => 'op-extra-large',
+			'm' => 'op-medium',
+			'l' => 'op-large',
+			'xl' => 'op-extra-large',
+		];
+
+		$fontSize = strtolower(trim($fontSize));
+
+		if (in_array($fontSize, $validOptions)) {
+			return $fontSize;
+		} elseif (array_key_exists($fontSize, $validOptions)) {
+			return $validOptions[$fontSize];
+		}
+
+		return '';
+
+	}
+
+	/**
+	 * _validPositioning
+	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
+	 *
+	 * @author  Christopher M. Black <cblack@devonium.com>
+	 *
+	 * @param   string $positioning
+	 *
+	 * @return string
+	 */
+	protected function _validPositioning($positioning) {
+
+		$validOptions = [
+			'below' => 'op-vertical-below',
+			'above' => 'op-vertical-above',
+			'center' => 'op-vertical-center',
+			'vertical-below' => 'op-vertical-below',
+			'vertical-above' => 'op-vertical-above',
+			'vertical-center' => 'op-vertical-center',
+		];
+
+		$positioning = strtolower(trim($positioning));
+
+		if (in_array($positioning, $validOptions)) {
+			return $positioning;
+		} elseif (array_key_exists($positioning, $validOptions)) {
+			return $validOptions[$positioning];
+		}
+
+		return '';
+
+	}
+
+	/**
+	 * _validHorizontalAlignment
+	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
+	 *
+	 * @author  Christopher M. Black <cblack@devonium.com>
+	 *
+	 * @param   string $horizontalAlignment
+	 *
+	 * @return string
+	 */
+	protected function _validHorizontalAlignment($horizontalAlignment) {
+
+		$validOptions = [
+			'left' => 'op-left',
+			'center' => 'op-center',
+			'right' => 'op-right',
+		];
+
+		$horizontalAlignment = strtolower(trim($horizontalAlignment));
+
+		if (in_array($horizontalAlignment, $validOptions)) {
+			return $horizontalAlignment;
+		} elseif (array_key_exists($horizontalAlignment, $validOptions)) {
+			return $validOptions[$horizontalAlignment];
+		}
+
+		return '';
+
+	}
+
+	/**
+	 * _validVerticalAlignment
+	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
+	 *
+	 * @author  Christopher M. Black <cblack@devonium.com>
+	 *
+	 * @param   string $verticalAlignment
+	 *
+	 * @return string
+	 */
+	protected function _validVerticalAlignment($verticalAlignment) {
+
+		$validOptions = [
+			'bottom' => 'op-vertical-bottom',
+			'center' => 'op-vertical-center',
+			'top' => 'op-vertical-top',
+			'vertical-bottom' => 'op-vertical-bottom',
+			'vertical-center' => 'op-vertical-center',
+			'vertical-top' => 'op-vertical-top',
+		];
+
+		$verticalAlignment = strtolower(trim($verticalAlignment));
+
+		if (in_array($verticalAlignment, $validOptions)) {
+			return $verticalAlignment;
+		} elseif (array_key_exists($verticalAlignment, $validOptions)) {
+			return $validOptions[$verticalAlignment];
+		}
+
+		return '';
 
 	}
 

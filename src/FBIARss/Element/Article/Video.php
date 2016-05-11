@@ -146,18 +146,15 @@ class Video extends Media {
 		$videoString .= $this->getPosterFrame(true);
 
 		if (!empty($this->getCaption())) {
-			$videoString .= $this->getCaption()
-				->render();
+			$videoString .= $this->getCaption()->render();
 		}
 
 		if (!empty($this->getAudio())) {
-			$videoString .= $this->getAudio()
-				->render();
+			$videoString .= $this->getAudio()->render();
 		}
 
 		if (!empty($this->getLocation())) {
-			$videoString .= $this->getLocation()
-				->render();
+			$videoString .= $this->getLocation()->render();
 		}
 
 		$videoString .= '</' . $this->getRoot() . '>';
@@ -264,7 +261,7 @@ class Video extends Media {
 		$validOptions = [
 			'' => '', // allows setting empty value
 			'loop' => 'loop',
-			'fade' => 'data-fade'
+			'fade' => 'data-fade',
 		];
 
 		if (in_array($loopMode, $validOptions)) {

@@ -17,10 +17,10 @@ use FBIARss\SimpleXMLElement;
  * @package     FBIARss\Element
  * @subpackage  FBIARss\Element\Article
  *
- * @author      Christopher M. Black <cblack@devonium.com>
- *
- * @version     0.1.1
  * @since       0.1.1
+ * @version     0.1.4
+ *
+ * @author      Christopher M. Black <cblack@devonium.com>
  */
 class SocialEmbed extends Base {
 
@@ -39,12 +39,15 @@ class SocialEmbed extends Base {
 	/**
 	 * Descriptive text for your social embed.
 	 *
-	 * @var \FBIARss\Element\Article\Caption[]
+	 * @var \FBIARss\Element\Article\Caption
 	 */
-	protected $_captions = [];
+	protected $_caption = null;
 
 	/**
 	 * render
+	 *
+	 * @since   0.1.1
+	 * @version 0.1.4
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
@@ -65,15 +68,13 @@ class SocialEmbed extends Base {
 		$iframeEnclosed = !$this->isValidURL($this->getSource());
 
 		if ($iframeEnclosed) {
-			$socialEmbedString .= '<iframe>' . $this->getSource() . '</iframe>';
+			$socialEmbedString .= $this->getSource();
 		} else {
 			$socialEmbedString .= '<iframe src="' . $this->getSource() . '"></iframe>';
 		}
 
-		if (!empty($this->getCaptions())) {
-			foreach ($this->getCaptions() as $caption) {
-				$socialEmbedString .= $caption->render();
-			}
+		if (!empty($this->getCaption())) {
+			$socialEmbedString .= $this->getCaption()->render();
 		}
 
 		$socialEmbedString .= '</' . $this->getRoot() . '>';
@@ -84,6 +85,9 @@ class SocialEmbed extends Base {
 
 	/**
 	 * getSource
+	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
@@ -97,6 +101,9 @@ class SocialEmbed extends Base {
 
 	/**
 	 * setSource
+	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
@@ -114,35 +121,36 @@ class SocialEmbed extends Base {
 	}
 
 	/**
-	 * getCaptionss
+	 * getCaptions
+	 *
+	 * @since   0.1.1
+	 * @version 0.1.4
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
-	 * @return  Caption    $_captions
+	 * @return  Caption    $_caption
 	 */
-	public function getCaptions() {
+	public function getCaption() {
 
-		return $this->_captions;
+		return $this->_caption;
 
 	}
 
 	/**
 	 * setCaption
 	 *
+	 * @since   0.1.1
+	 * @version 0.1.4
+	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
 	 * @param   Caption $caption
-	 * @param   boolean $append
 	 *
-	 * @return  Interactive
+	 * @return  SocialEmbed
 	 */
-	public function setCaption(Caption $caption, $append = true) {
+	public function setCaption(Caption $caption) {
 
-		if ($append) {
-			$this->_captions[] = $caption;
-		} else {
-			$this->_captions = [$caption];
-		}
+		$this->_caption = $caption;
 
 		return $this;
 
@@ -153,27 +161,33 @@ class SocialEmbed extends Base {
 	 *
 	 * Setup Caption object
 	 *
+	 * @since   0.1.1
+	 * @version 0.1.4
+	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
-	 * @param   string      $title
-	 * @param   string|null $credit
-	 * @param   string|null $body
-	 * @param   string|null $fontSize
-	 * @param   string|null $positioning
-	 * @param   string|null $horizontalAlignment
-	 * @param   string|null $verticalAlignment
+	 * @param array $options        valid options:
+	 *                              - title
+	 *                              - titleFontSize
+	 *                              - titlePositioning
+	 *                              - titleHorizontalAlignment
+	 *                              - titleVerticalAlignment
+	 *                              - credit
+	 *                              - creditFontSize
+	 *                              - creditPositioning
+	 *                              - creditHorizontalAlignment
+	 *                              - creditVerticalAlignment
+	 *                              - body
+	 *                              - fontSize (body font size if individual elements are aligned)
+	 *                              - positioning (body positioning if individual elements are aligned)
+	 *                              - horizontalAlignment (body horizontal alignment  if individual elements are aligned)
+	 *                              - verticalAlignment (body vertical alignment if individual elements are aligned)
 	 *
-	 * @return Interactive
+	 * @return Caption
 	 */
-	public function createCaption($title,
-		$credit = null,
-		$body = null,
-		$fontSize = null,
-		$positioning = null,
-		$horizontalAlignment = null,
-		$verticalAlignment = null) {
+	public function createCaption($options = []) {
 
-		return $this->setCaption(new Caption($title, $credit, $body, $fontSize, $positioning, $horizontalAlignment, $verticalAlignment));
+		return $this->setCaption(new Caption($options));
 
 	}
 

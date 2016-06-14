@@ -13,7 +13,7 @@ use FBIARss\SimpleXMLElement;
  * @author      Christopher M. Black <cblack@devonium.com>
  *
  * @since       0.1.1
- * @version     0.1.2
+ * @version     0.1.6
  */
 class Ad extends Base {
 
@@ -48,9 +48,12 @@ class Ad extends Base {
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
-	 * @param string|null $source
-	 * @param string|null $width
-	 * @param string|null $height
+	 * @since   0.1.1
+	 * @version 0.1.1
+	 *
+	 * @param   string|null $source
+	 * @param   string|null $width
+	 * @param   string|null $height
 	 */
 	public function __construct($source = null, $width = null, $height = null) {
 
@@ -75,10 +78,13 @@ class Ad extends Base {
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
-	 * @param SimpleXMLElement $xmlElement
+	 * @since   0.1.1
+	 * @version 0.1.6
 	 *
-	 * @return string
-	 * @throws \Exception
+	 * @param   SimpleXMLElement|null $xmlElement
+	 *
+	 * @return  string
+	 * @throws  \Exception
 	 */
 	public function render(SimpleXMLElement $xmlElement = null) {
 
@@ -89,7 +95,7 @@ class Ad extends Base {
 
 		// add dimensions
 		$adHeight = null;
-		$adWidth  = null;
+		$adWidth = null;
 
 		if (!empty($this->getHeight())) {
 			$adHeight = $this->getHeight();
@@ -99,22 +105,26 @@ class Ad extends Base {
 			$adWidth = $this->getWidth();
 		}
 
-		$adString = '<' . $this->getRoot() . ' class="op-ad">  <iframe';
+		$adString = '<' . $this->getRoot() . ' class="op-ad">';
+
+		$iframeEnclosed = !$this->isValidURL($this->getSource());
+
+		if ($iframeEnclosed) {
+			$adString .= $this->getSource();
+		} else {
+
+			if (!empty($adWidth)) {
+				$adString .= ' width="' . $adWidth . '"';
+			}
+
+			$adString .= ' src="' . $this->getSource() . '">';
+			$adString .= '</iframe>';
+
+		}
 
 		if (!empty($adHeight)) {
 			$adString .= ' height="' . $adHeight . '"';
 		}
-
-		if (!empty($adWidth)) {
-			$adString .= ' width="' . $adWidth . '"';
-		}
-
-		if ($this->isValidURL($this->getSource())) {
-			$adString .= ' src="' . $this->getSource() . '">';
-		} else {
-			$adString .= '>' . $this->getSource();
-		}
-		$adString .= '</iframe>';
 
 		$adString .= '</' . $this->getRoot() . '>';
 
@@ -126,6 +136,9 @@ class Ad extends Base {
 	 * getSource
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
+	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
 	 *
 	 * @return  string    $_source
 	 */
@@ -139,6 +152,9 @@ class Ad extends Base {
 	 * setSource
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
+	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
 	 *
 	 * @param   string $source
 	 *
@@ -161,6 +177,9 @@ class Ad extends Base {
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
+	 *
 	 * @return  string    $_height
 	 */
 	public function getHeight() {
@@ -173,6 +192,9 @@ class Ad extends Base {
 	 * setHeight
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
+	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
 	 *
 	 * @param   string $height
 	 *
@@ -191,6 +213,9 @@ class Ad extends Base {
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
+	 *
 	 * @return  string    $_width
 	 */
 	public function getWidth() {
@@ -203,6 +228,9 @@ class Ad extends Base {
 	 * setWidth
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
+	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
 	 *
 	 * @param   string $width
 	 *

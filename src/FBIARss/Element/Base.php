@@ -6,12 +6,12 @@ use FBIARss\SimpleXMLElement;
 /**
  * Class Base
  *
- * @package     FBIARss\Element
+ * @package FBIARss\Element
  *
- * @author      Christopher M. Black <cblack@devonium.com>
+ * @author  Christopher M. Black <cblack@devonium.com>
  *
- * @version     0.1.1
- * @since       0.1.1
+ * @since   0.1.1
+ * @version 0.1.5
  */
 abstract class Base {
 
@@ -23,7 +23,7 @@ abstract class Base {
 	 *
 	 * @var string
 	 */
-	protected static $_rssDateFormat =  \DateTime::ATOM;
+	protected static $_rssDateFormat = 'Y-m-d\TH:i:s\Z';
 
 	/**
 	 * Default format example: October 20th 2015
@@ -54,11 +54,14 @@ abstract class Base {
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
-	 * @param array|string $check array of strings or comma separated strings
-	 * @param int          $returnType
-	 * @param string       $stringSeparator
+	 * @since   0.1.1
+	 * @version 0.1.1
 	 *
-	 * @return array
+	 * @param   array|string    $check              array of strings or comma separated strings
+	 * @param   integer         $returnType
+	 * @param   string          $stringSeparator
+	 *
+	 * @return  array
 	 */
 	public static function arrayOrSeparatedString($check, $returnType = self::RETURN_ARRAY, $stringSeparator = null) {
 
@@ -96,9 +99,12 @@ abstract class Base {
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
-	 * @param null|int|string $date
+	 * @since   0.1.1
+	 * @version 0.1.5
 	 *
-	 * @return bool|string
+	 * @param   null|int|string $date
+	 *
+	 * @return  boolean|string
 	 */
 	public static function formatRSSDate($date = null) {
 
@@ -108,21 +114,25 @@ abstract class Base {
 				? strtotime($date)
 				: null);
 
-		return date(
+		return gmdate(
 			self::$_rssDateFormat,
 			!is_null($date)
 				? $date
-				: time()
-		);
+				: time());
 
 	}
 
 	/**
 	 * Checks if a string is a valid timestamp.
 	 *
-	 * @param  string $timestamp Timestamp to validate.
+	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
-	 * @return bool
+	 * @since   0.1.1
+	 * @version 0.1.1
+	 *
+	 * @param   string  $timestamp  Timestamp to validate.
+	 *
+	 * @return  boolean
 	 */
 	public static function isTimestamp($timestamp) {
 
@@ -139,9 +149,12 @@ abstract class Base {
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
-	 * @param null|int|string $date
+	 * @since   0.1.1
+	 * @version 0.1.1
 	 *
-	 * @return bool|string
+	 * @param   null|int|string $date
+	 *
+	 * @return  boolean|string
 	 */
 	public static function formatUserDate($date = null) {
 
@@ -155,8 +168,7 @@ abstract class Base {
 			self::$_displayDateFormat,
 			!is_null($date)
 				? $date
-				: time()
-		);
+				: time());
 
 	}
 
@@ -165,9 +177,12 @@ abstract class Base {
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
-	 * @param boolean $value
+	 * @since   0.1.1
+	 * @version 0.1.1
 	 *
-	 * @return string
+	 * @param   boolean $value
+	 *
+	 * @return  string
 	 */
 	public static function stringifyBoolean($value) {
 
@@ -182,7 +197,10 @@ abstract class Base {
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
-	 * @return string
+	 * @since   0.1.1
+	 * @version 0.1.1
+	 *
+	 * @return  string
 	 */
 	public function getStringSeparator() {
 
@@ -195,9 +213,12 @@ abstract class Base {
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
-	 * @param string $stringSeparator
+	 * @since   0.1.1
+	 * @version 0.1.1
 	 *
-	 * @return Base
+	 * @param   string  $stringSeparator
+	 *
+	 * @return  Base
 	 */
 	public function setStringSeparator($stringSeparator) {
 
@@ -212,13 +233,16 @@ abstract class Base {
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
-	 * @param string $url
+	 * @since   0.1.1
+	 * @version 0.1.1
 	 *
-	 * @return boolean
+	 * @param   string  $url
+	 *
+	 * @return  boolean
 	 */
 	public function isValidURL($url) {
 
-		return filter_var($url, FILTER_VALIDATE_URL) !== FALSE;
+		return filter_var($url, FILTER_VALIDATE_URL) !== false;
 
 	}
 
@@ -227,7 +251,10 @@ abstract class Base {
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
-	 * @return string
+	 * @since   0.1.1
+	 * @version 0.1.1
+	 *
+	 * @return  string
 	 */
 	public function getRoot() {
 
@@ -240,17 +267,20 @@ abstract class Base {
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
-	 * @param string $text
-	 * @param bool $stripBeginning
-	 * @param bool $stripEnding
+	 * @since   0.1.1
+	 * @version 0.1.1
 	 *
-	 * @return string
+	 * @param   string  $text
+	 * @param   boolean $stripBeginning
+	 * @param   boolean $stripEnding
+	 *
+	 * @return  string
 	 */
 	public function stripBeginEndParagraphs($text, $stripBeginning = true, $stripEnding = true) {
 
-		$text              = trim($text);
+		$text = trim($text);
 		$beginningPrefixes = ['<p>', '</p>'];
-		$endingPrefixes    = ['</p>', '<p>'];
+		$endingPrefixes = ['</p>', '<p>'];
 
 		if ($stripBeginning) {
 			foreach ($beginningPrefixes as $beginningPrefix) {
@@ -273,9 +303,12 @@ abstract class Base {
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
-	 * @param SimpleXMLElement $xmlElement
+	 * @since   0.1.1
+	 * @version 0.1.1
 	 *
-	 * @return SimpleXMLElement|string
+	 * @param   SimpleXMLElement|null   $xmlElement
+	 *
+	 * @return  SimpleXMLElement|string
 	 */
 	abstract public function render(SimpleXMLElement $xmlElement = null);
 

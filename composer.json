@@ -1,7 +1,7 @@
 {
   "name": "mcstutterfish/fbia-rss",
   "description": "Facebook Instant Articles RSS Builder (with Laravel 4 Service Provider)",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "keywords": [
     "rss",
     "laravel",

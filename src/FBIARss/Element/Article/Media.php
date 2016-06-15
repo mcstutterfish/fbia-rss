@@ -125,7 +125,7 @@ class Media extends Base {
 	 * render
 	 *
 	 * @since   0.1.1
-	 * @version 0.1.4
+	 * @version 0.1.7
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
@@ -144,7 +144,7 @@ class Media extends Base {
 		$mediaString = '<' . $this->getRoot() . (!empty($this->getFeedback())
 				? ' ' . $this->getFeedback()
 				: '') . (!empty($this->getPresentation())
-				? ' ' . $this->getPresentation()
+				? ' ' . $this->getPresentation(true)
 				: '') . '>';
 		$mediaString .= '<img src="' . $this->getSource() . '" />';
 

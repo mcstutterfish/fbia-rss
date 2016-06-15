@@ -131,7 +131,7 @@ class Caption extends Base {
 	 * Caption constructor.
 	 *
 	 * @since   0.1.1
-	 * @version 0.1.4
+	 * @version 0.1.7
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
@@ -157,6 +157,10 @@ class Caption extends Base {
 		if (!empty($options) && !empty($options['title'])) {
 
 			$this->setTitle($options['title']);
+
+			if (!empty($options['titleFontSize'])) {
+				$this->setTitleFontSize($options['titleFontSize']);
+			}
 
 			if (!empty($options['titlePositioning'])) {
 				$this->setTitlePositioning($options['titlePositioning']);
@@ -507,7 +511,7 @@ class Caption extends Base {
 	 * setTitleFontSize
 	 *
 	 * @since   0.1.4
-	 * @version 0.1.4
+	 * @version 0.1.7
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
@@ -517,7 +521,7 @@ class Caption extends Base {
 	 */
 	public function setTitleFontSize($titleFontSize) {
 
-		$this->_titleFontSize = $titleFontSize;
+		$this->_titleFontSize = $this->_validFontSize($titleFontSize);
 
 		return $this;
 
@@ -687,7 +691,7 @@ class Caption extends Base {
 	 * setCreditFontSize
 	 *
 	 * @since   0.1.4
-	 * @version 0.1.4
+	 * @version 0.1.7
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
@@ -697,7 +701,7 @@ class Caption extends Base {
 	 */
 	public function setCreditFontSize($creditFontSize) {
 
-		$this->_creditFontSize = $creditFontSize;
+		$this->_creditFontSize = $this->_validFontSize($creditFontSize);
 
 		return $this;
 

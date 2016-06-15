@@ -469,20 +469,22 @@ class Header extends Base {
 	/**
 	 * createAd
 	 *
-	 * @since   0.1.2
-	 * @version 0.1.2
-	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
-	 * @param string      $source
-	 * @param string|null $width
-	 * @param string|null $height
+	 * @since   0.1.2
+	 * @version 0.1.7
+	 *
+	 * @param   array   $options    valid options:
+	 *                              - source
+	 *                              - width
+	 *                              - height
+	 *                              - default
 	 *
 	 * @return Header
 	 */
-	public function createAd($source, $width = null, $height = null) {
+	public function createAd($options = []) {
 
-		return $this->setAd(new Ad($source, $width, $height));
+		return $this->setAd(new Ad($options));
 
 	}
 

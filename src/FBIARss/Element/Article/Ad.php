@@ -13,7 +13,7 @@ use FBIARss\SimpleXMLElement;
  * @author      Christopher M. Black <cblack@devonium.com>
  *
  * @since       0.1.1
- * @version     0.1.6
+ * @version     0.1.7
  */
 class Ad extends Base {
 
@@ -44,29 +44,42 @@ class Ad extends Base {
 	protected $_width = '';
 
 	/**
+	 * default ad?
+	 *
+	 * @var boolean
+	 */
+	protected $_default = false;
+
+	/**
 	 * Ad constructor.
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
 	 * @since   0.1.1
-	 * @version 0.1.1
+	 * @version 0.1.7
 	 *
-	 * @param   string|null $source
-	 * @param   string|null $width
-	 * @param   string|null $height
+	 * @param   array   $options    valid options:
+	 *                              - source
+	 *                              - width
+	 *                              - height
+	 *                              - default
 	 */
-	public function __construct($source = null, $width = null, $height = null) {
+	public function __construct($options = []) {
 
-		if (!is_null($source)) {
+		if (!empty($options) && !empty($options['source'])) {
 
-			$this->setSource($source);
+			$this->setSource($options['source']);
 
-			if (!empty($width)) {
-				$this->setWidth($width);
+			if (!empty($options['width'])) {
+				$this->setWidth($options['width']);
 			}
 
-			if (!empty($height)) {
-				$this->setHeight($height);
+			if (!empty($options['height'])) {
+				$this->setHeight($options['height']);
+			}
+
+			if (!empty($options['default'])) {
+				$this->setDefault($options['default']);
 			}
 
 		}
@@ -79,7 +92,7 @@ class Ad extends Base {
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
 	 * @since   0.1.1
-	 * @version 0.1.6
+	 * @version 0.1.7
 	 *
 	 * @param   SimpleXMLElement|null $xmlElement
 	 *
@@ -105,7 +118,13 @@ class Ad extends Base {
 			$adWidth = $this->getWidth();
 		}
 
-		$adString = '<' . $this->getRoot() . ' class="op-ad">';
+		$class = 'op-ad';
+
+		if ($this->getDefault()) {
+			$class .= ' op-ad-default';
+		}
+
+		$adString = '<' . $this->getRoot() . ' class="' . $class . '">';
 
 		$iframeEnclosed = !$this->isValidURL($this->getSource());
 
@@ -239,6 +258,42 @@ class Ad extends Base {
 	public function setWidth($width) {
 
 		$this->_width = $width;
+
+		return $this;
+
+	}
+
+	/**
+	 * getDefault
+	 *
+	 * @author  Christopher M. Black <cblack@devonium.com>
+	 *
+	 * @since   0.1.7
+	 * @version 0.1.7
+	 *
+	 * @return  boolean $_default
+	 */
+	public function getDefault() {
+
+		return $this->_default;
+
+	}
+
+	/**
+	 * setDefault
+	 *
+	 * @author  Christopher M. Black <cblack@devonium.com>
+	 *
+	 * @since   0.1.7
+	 * @version 0.1.7
+	 *
+	 * @param   boolean $default
+	 *
+	 * @return  Ad
+	 */
+	public function setDefault($default) {
+
+		$this->_default = (boolean) $default;
 
 		return $this;
 

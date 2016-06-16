@@ -11,7 +11,7 @@ use FBIARss\SimpleXMLElement;
  * @subpackage  FBIARss\Element\Article
  *
  * @version     0.1.1
- * @since       0.1.4
+ * @since       0.1.8
  *
  * @author      Christopher M. Black <cblack@devonium.com>
  */
@@ -87,7 +87,7 @@ class Html extends Base {
 	 * addHtmlItem
 	 *
 	 * @since   0.1.1
-	 * @version 0.1.4
+	 * @version 0.1.8
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
@@ -96,8 +96,6 @@ class Html extends Base {
 	 * @return  Html
 	 */
 	public function addHtmlItem($htmlItem) {
-
-		$htmlItem = $this->stripBeginEndParagraphs(trim($htmlItem));
 
 		if (!empty($htmlItem)) {
 

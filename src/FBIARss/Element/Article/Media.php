@@ -11,7 +11,7 @@ use FBIARss\SimpleXMLElement;
  * @subpackage  FBIARss\Element\Article
  *
  * @since       0.1.1
- * @version     0.1.2
+ * @version     0.1.9
  *
  * @author      Christopher M. Black <cblack@devonium.com>
  *
@@ -125,7 +125,7 @@ class Media extends Base {
 	 * render
 	 *
 	 * @since   0.1.1
-	 * @version 0.1.7
+	 * @version 0.1.9
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
@@ -142,7 +142,7 @@ class Media extends Base {
 		}
 
 		$mediaString = '<' . $this->getRoot() . (!empty($this->getFeedback())
-				? ' ' . $this->getFeedback()
+				? ' ' . $this->getFeedback(true)
 				: '') . (!empty($this->getPresentation())
 				? ' ' . $this->getPresentation(true)
 				: '') . '>';

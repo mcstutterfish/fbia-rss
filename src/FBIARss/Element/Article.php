@@ -12,7 +12,7 @@ use FBIARss\SimpleXMLElement;
  * @author      Christopher M. Black <cblack@devonium.com>
  *
  * @since       0.1.1
- * @version     0.1.2
+ * @version     0.1.9
  */
 class Article extends Base {
 
@@ -97,7 +97,6 @@ class Article extends Base {
 		'pullquote' => 'PullQuote',
 		'relatedarticles' => 'RelatedArticles',
 		'slideshow' => 'SlideShow',
-		'socialembed' => 'SocialEmbed',
 		'video' => 'Video'
 	];
 

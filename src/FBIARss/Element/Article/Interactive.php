@@ -11,7 +11,7 @@ use FBIARss\SimpleXMLElement;
  * @subpackage  FBIARss\Element\Article
  *
  * @since       0.1.1
- * @version     0.1.4
+ * @version     0.1.9
  *
  * @author      Christopher M. Black <cblack@devonium.com>
  */
@@ -54,7 +54,7 @@ class Interactive extends Base {
 	 * render
 	 *
 	 * @since   0.1.1
-	 * @version 0.1.1
+	 * @version 0.1.9
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
@@ -73,21 +73,20 @@ class Interactive extends Base {
 		$interactiveString = '<' . $this->getRoot() . ' class="op-interactive">';
 
 		$iframeEnclosed = !$this->isValidURL($this->getSource());
-		$height         = $this->getHeight(true);
-		$height         = empty($height)
+		$height = $this->getHeight(true);
+		$height = empty($height)
 			? ''
 			: ' ' . $height;
 
+
 		if ($iframeEnclosed) {
-			$interactiveString .= '<iframe ' . $this->getWidth(true) . $height . '>' . $this->getSource() . '</iframe>';
+			$interactiveString .= $this->getSource();
 		} else {
 			$interactiveString .= '<iframe src="' . $this->getSource() . '" ' . $this->getWidth(true) . $height . '></iframe>';
 		}
 
 		if (!empty($this->getCaption())) {
-			foreach ($this->getCaption() as $caption) {
-				$interactiveString .= $caption->render();
-			}
+			$interactiveString .= $this->getCaption()->render();
 		}
 
 		$interactiveString .= '</' . $this->getRoot() . '>';

@@ -12,7 +12,7 @@ use FBIARss\SimpleXMLElement;
  * @author      Christopher M. Black <cblack@devonium.com>
  *
  * @version     0.1.1
- * @since       0.1.1
+ * @since       0.1.9
  */
 class Video extends Media {
 
@@ -59,6 +59,9 @@ class Video extends Media {
 	/**
 	 * setControlsDisabled
 	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
+	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
 	 * @return  Video
@@ -73,6 +76,9 @@ class Video extends Media {
 
 	/**
 	 * setAutoPlayEnabled
+	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
@@ -89,6 +95,9 @@ class Video extends Media {
 	/**
 	 * setAutoPlayDisabled
 	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
+	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
 	 * @return  Video
@@ -103,6 +112,9 @@ class Video extends Media {
 
 	/**
 	 * render
+	 *
+	 * @since   0.1.1
+	 * @version 0.1.9
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
@@ -125,9 +137,9 @@ class Video extends Media {
 		}
 
 		$videoString = '<' . $this->getRoot() . (!empty($this->getFeedback())
-				? ' ' . $this->getFeedback()
+				? ' ' . $this->getFeedback(true)
 				: '') . (!empty($this->getPresentation())
-				? ' ' . $this->getPresentation()
+				? ' ' . $this->getPresentation(true)
 				: '') . '>';
 
 		$playbackMode = $this->isAutoPlay()
@@ -166,6 +178,9 @@ class Video extends Media {
 	/**
 	 * getType
 	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
+	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
 	 * @return string
@@ -178,6 +193,9 @@ class Video extends Media {
 
 	/**
 	 * setType
+	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
@@ -196,6 +214,9 @@ class Video extends Media {
 	/**
 	 * getPlaybackMode
 	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
+	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
 	 * @return  boolean $_autoPlay
@@ -209,6 +230,9 @@ class Video extends Media {
 	/**
 	 * isControlsEnabled
 	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
+	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
 	 * @return  boolean    $_controlsEnabled
@@ -221,6 +245,9 @@ class Video extends Media {
 
 	/**
 	 * setControlsEnabled
+	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
@@ -237,6 +264,9 @@ class Video extends Media {
 	/**
 	 * getLoopMode
 	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
+	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
 	 * @return  string    $_loopMode
@@ -249,6 +279,9 @@ class Video extends Media {
 
 	/**
 	 * setLoopMode
+	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
@@ -277,6 +310,9 @@ class Video extends Media {
 	/**
 	 * getPosterFrame
 	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
+	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
 	 * @param bool $wrapElement (wrap in img tag)
@@ -295,6 +331,9 @@ class Video extends Media {
 
 	/**
 	 * setPosterFrame
+	 *
+	 * @since   0.1.1
+	 * @version 0.1.1
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *

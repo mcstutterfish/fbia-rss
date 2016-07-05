@@ -11,7 +11,7 @@ use FBIARss\SimpleXMLElement;
  * @subpackage  FBIARss\Element\Article
  *
  * @since       0.1.1
- * @version     0.1.9
+ * @version     0.1.10
  *
  * @author      Christopher M. Black <cblack@devonium.com>
  */
@@ -115,7 +115,7 @@ class Interactive extends Base {
 	 * setSource
 	 *
 	 * @since   0.1.1
-	 * @version 0.1.1
+	 * @version 0.1.10
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
@@ -126,7 +126,8 @@ class Interactive extends Base {
 	 */
 	public function setSource($source) {
 
-		$this->_source = $source;
+
+		$this->_source = $this->stripBeginEndParagraphs($source);
 
 		return $this;
 

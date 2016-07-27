@@ -125,7 +125,7 @@ class Media extends Base {
 	 * render
 	 *
 	 * @since   0.1.1
-	 * @version 0.1.9
+	 * @version 0.1.11
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
@@ -146,7 +146,12 @@ class Media extends Base {
 				: '') . (!empty($this->getPresentation())
 				? ' ' . $this->getPresentation(true)
 				: '') . '>';
-		$mediaString .= '<img src="' . $this->getSource() . '" />';
+
+		if (substr($this->getSource(), 0, 5) == '<img ') {
+			$mediaString .= $this->getSource();
+		} else {
+			$mediaString .= '<img src="' . $this->getSource() . '" />';
+		}
 
 		if (!empty($this->getCaption())) {
 			$mediaString .= $this->getCaption()->render();
@@ -186,7 +191,7 @@ class Media extends Base {
 	 * setSource
 	 *
 	 * @since   0.1.1
-	 * @version 0.1.1
+	 * @version 0.1.11
 	 *
 	 * @author  Christopher M. Black <cblack@devonium.com>
 	 *
@@ -197,7 +202,7 @@ class Media extends Base {
 	 */
 	public function setSource($source) {
 
-		if (!$this->isValidURL($source)) {
+		if (substr($source, 0, 5) != '<img ' && !$this->isValidURL($source)) {
 			throw new \Exception('source (' . $source . ') must be a valid URL for all media');
 		}
 
